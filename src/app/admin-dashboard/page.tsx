@@ -13,7 +13,7 @@ import {
     IconSettings,
     IconTerminal2,
     IconTrendingUp,
-    IconUserBolt,
+    // IconUserBolt,
     IconUsersGroup,
 } from "@tabler/icons-react";
 import { motion } from "motion/react";
@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import Dashboard from "@/components/sections/Dashboard";
 import UsersDashboard from "@/components/sections/UsersDashboard";
+// import NavSection from "@/components/sections/NavSection";
 
 export default function AdminDashboard() {
     const searchParams = useSearchParams();
@@ -176,6 +177,7 @@ export const LogoIcon = () => {
 const DemoDashboard = () => {
     return (
         <div className="flex flex-1">
+            {/* <NavSection /> */}
             <div className="flex h-full w-full flex-1 flex-col gap-2 rounded-tl-2xl bg-[#020b1a] p-2 md:p-10 ">
                 <div className="flex gap-2">
                     {[...new Array(4)].map((i, idx) => (

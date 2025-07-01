@@ -1,44 +1,91 @@
-import React from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import createGlobe from "cobe";
-import { useEffect, useRef } from "react";
-import { motion } from "motion/react";
-import { IconBrandYoutubeFilled, IconCertificate, IconClockHour3, IconUsersGroup } from "@tabler/icons-react";
-
+// import { motion } from "motion/react";
+import {
+    // IconBrandYoutubeFilled,
+    IconCertificate,
+    IconClockHour3,
+    IconUsersGroup,
+} from "@tabler/icons-react";
+import Link from "next/link";
+import axios from "axios";
 
 export default function CoursesSection() {
-    const features = [
-        {
-            title: "Introduction to Machine Learning",
-            description:
-                "Learn the fundamentals of Machine Learning. Get started with the basics of Machine Learning.",
-            skeleton: SkeletonImage('/course1.png'),
-            className:
-                "col-span-1 lg:col-span-4 border-b lg:border-r dark:border-neutral-800",
-        },
-        {
-            title: "Deep Learning with Neural Networks",
-            description:
-                "Dive deep into the world of Neural Networks. Understand how to build and train deep learning models.",
-            skeleton: SkeletonImage("/course2.png"),
-            className: "border-b col-span-1 lg:col-span-2 dark:border-neutral-800",
-        },
-        {
-            title: "Machine Learning for Beginners",
-            description:
-                "A beginner's guide to Machine Learning. Learn the basics of Machine Learning and how to apply it.",
-            skeleton: SkeletonImage('/course3.png'),
-            className:
-                "col-span-1 lg:col-span-3 lg:border-r  dark:border-neutral-800",
-        },
-        {
-            title: "Scalable Model Deployment",
-            description:
-                "Learn how to deploy Machine Learning models at scale. Understand the best practices for deploying models in production.",
-            skeleton: SkeletonImage('/course4.png'),
-            className: "col-span-1 lg:col-span-3 border-b lg:border-none",
-        },
-    ];
+    // const features = [
+    //     {
+    //         title: "Introduction to Machine Learning",
+    //         description:
+    //             "Learn the fundamentals of Machine Learning. Get started with the basics of Machine Learning.",
+    //         skeleton: SkeletonImage('/course1.png'),
+    //         className:
+    //             "col-span-1 lg:col-span-4 border-b lg:border-r dark:border-neutral-800",
+    //     },
+    //     {
+    //         title: "Deep Learning with Neural Networks",
+    //         description:
+    //             "Dive deep into the world of Neural Networks. Understand how to build and train deep learning models.",
+    //         skeleton: SkeletonImage("/course2.png"),
+    //         className: "border-b col-span-1 lg:col-span-2 dark:border-neutral-800",
+    //     },
+    //     {
+    //         title: "Machine Learning for Beginners",
+    //         description:
+    //             "A beginner's guide to Machine Learning. Learn the basics of Machine Learning and how to apply it.",
+    //         skeleton: SkeletonImage('/course3.png'),
+    //         className:
+    //             "col-span-1 lg:col-span-3 lg:border-r  dark:border-neutral-800",
+    //     },
+    //     {
+    //         title: "Scalable Model Deployment",
+    //         description:
+    //             "Learn how to deploy Machine Learning models at scale. Understand the best practices for deploying models in production.",
+    //         skeleton: SkeletonImage('/course4.png'),
+    //         className: "col-span-1 lg:col-span-3 border-b lg:border-none",
+    //     },
+    //     // {
+    //     //     title: "AI-Powered Web Development",
+    //     //     description:
+    //     //         "Build dynamic web applications using AI tools. From backend logic to smart frontend UX—leverage the power of artificial intelligence.",
+    //     //     skeleton: SkeletonImage('/course5.png'),
+    //     //     className: "col-span-1 lg:col-span-6 dark:border-neutral-800",
+    //     // },
+    // ];
+    const [features, setFeatures] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+    const fetchCourses = async () => {
+      setLoading(true)
+      try {
+        const response = await axios.get('/api/courses?page=1&limit=4')
+        const courses = response.data.courses
+
+        const transformed = courses.map((course: any, index: number) => ({
+          title: course.title,
+          description: course.description,
+          skeleton: SkeletonImage(`/course${(index % 4) + 1}.png`), // cycle 1-4
+          className: [
+            "col-span-1 lg:col-span-4 border-b lg:border-r dark:border-neutral-800",
+            "border-b col-span-1 lg:col-span-2 dark:border-neutral-800",
+            "col-span-1 lg:col-span-3 lg:border-r  dark:border-neutral-800",
+            "col-span-1 lg:col-span-3 border-b lg:border-none",
+          ][index % 4], // repeat classes in the same order
+        }))
+
+        setFeatures(transformed)
+      } catch (err) {
+        console.error("Failed to fetch courses:", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchCourses()
+  }, [])
+
+  console.log("Features:", features);
     return (
         <section id="courses">
             <div className="relative bg-[#020b1a] flex justify-between items-center flex-col z-20 py-10 lg:py-40 max-w-7xl mx-auto">
@@ -47,26 +94,32 @@ export default function CoursesSection() {
                         Explore Our Courses
                     </h4>
 
-                    <p className="text-sm lg:text-base  max-w-2xl  my-4 mx-auto text-neutral-500 text-center font-normal dark:text-neutral-300">
-                        Dive into our comprehensive courses designed to help you master AI and Machine Learning. Whether you're a beginner or an expert, we have something for everyone.
+                    <p className="text-sm lg:text-base max-w-2xl my-4 mx-auto text-neutral-500 text-center font-normal dark:text-neutral-300">
+                        Dive into our comprehensive courses designed to help you master AI and Machine Learning. Whether you&apos;re a beginner or an expert, we have something for everyone.
                     </p>
                 </div>
 
-                <div className="relative ">
+                <div className="relative w-full">
                     <div className="grid grid-cols-1 lg:grid-cols-6 mt-12 xl:border rounded-md dark:border-neutral-800">
-                        {features.map((feature) => (
+                        {loading?
+                        "Loading ..."
+                        :
+                        features.map((feature) => (
                             <FeatureCard key={feature.title} className={feature.className}>
                                 <FeatureTitle>{feature.title}</FeatureTitle>
                                 <FeatureDescription>{feature.description}</FeatureDescription>
                                 <FeaturesContent />
                                 {feature.skeleton}
                             </FeatureCard>
-                        ))}
+                        ))} 
                     </div>
                 </div>
-                <button className="w-60 mt-4 transform rounded-lg border border-gray-300 bg-white px-6 py-2 font-medium text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:bg-gray-900">
+                
+                <Link href={'/courses'}>
+                <button className=" cursor-pointer w-60 mt-4 transform rounded-lg border border-gray-300 bg-white px-6 py-2 font-medium text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:bg-gray-900">
                     Explore More Courses
                 </button>
+                </Link>
             </div>
         </section>
     );
@@ -88,7 +141,7 @@ const FeatureCard = ({
 
 const FeatureTitle = ({ children }: { children?: React.ReactNode }) => {
     return (
-        <p className=" max-w-5xl font-bold mx-auto text-left tracking-tight text-black dark:text-white text-xl md:text-2xl md:leading-snug">
+        <p className="max-w-5xl font-bold mx-auto text-left tracking-tight text-black dark:text-white text-xl md:text-2xl md:leading-snug">
             {children}
         </p>
     );
@@ -96,13 +149,7 @@ const FeatureTitle = ({ children }: { children?: React.ReactNode }) => {
 
 const FeatureDescription = ({ children }: { children?: React.ReactNode }) => {
     return (
-        <p
-            className={cn(
-                "text-sm md:text-base  max-w-4xl text-left mx-auto",
-                "text-neutral-500 text-center font-normal dark:text-neutral-300",
-                "text-left max-w-sm mx-0 md:text-sm my-2"
-            )}
-        >
+        <p className="text-sm md:text-base max-w-4xl text-left mx-auto text-neutral-500 font-normal dark:text-neutral-300 text-left max-w-sm mx-0 md:text-sm my-2">
             {children}
         </p>
     );
@@ -135,28 +182,21 @@ export const FeaturesContent = () => {
                     Certificate of Completion
                 </p>
             </div>
-
-
-
         </div>
-    )
-}
-
-
-
+    );
+};
 
 export const SkeletonImage = (url: string) => {
     return (
         <div className="relative flex my-8 mx-2 gap-10 h-[400px] md:h-[500px] group rounded-2xl">
-            <div className="w-full  p-5  mx-auto bg-white dark:bg-neutral-900 shadow-2xl group h-full">
-                <div className="flex flex-1 w-full h-full flex-col space-y-2  ">
-                    {/* TODO */}
+            <div className="w-full p-5 mx-auto bg-white dark:bg-neutral-900 shadow-2xl group h-full">
+                <div className="flex flex-1 w-full h-full flex-col space-y-2">
                     <img
                         src={url}
-                        alt="header"
+                        alt="Course preview"
                         width={600}
                         height={600}
-                        className="h-full w-full aspect-square object-cover object-left-top rounded-sm object-center content-center"
+                        className="h-full w-full aspect-square object-cover object-left-top rounded-sm object-center"
                     />
                 </div>
             </div>
@@ -167,108 +207,9 @@ export const SkeletonImage = (url: string) => {
     );
 };
 
-export const SkeletonThree = () => {
-    return (
-        <a
-            href="https://www.youtube.com/watch?v=RPa3_AD1_Vs"
-            target="__blank"
-            className="relative flex gap-10  h-full group/image"
-        >
-            <div className="w-full  mx-auto bg-transparent dark:bg-transparent group h-full">
-                <div className="flex flex-1 w-full h-full flex-col space-y-2  relative">
-                    {/* TODO */}
-                    <IconBrandYoutubeFilled className="h-20 w-20 absolute z-10 inset-0 text-red-500 m-auto " />
-                    <img
-                        src="https://assets.aceternity.com/fireship.jpg"
-                        alt="header"
-                        width={800}
-                        height={800}
-                        className="h-full w-full aspect-square object-cover object-center rounded-sm blur-none group-hover/image:blur-md transition-all duration-200"
-                    />
-                </div>
-            </div>
-        </a>
-    );
-};
-
-export const SkeletonTwo = () => {
-    const images = [
-        "https://images.unsplash.com/photo-1517322048670-4fba75cbbb62?q=80&w=3000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        "https://images.unsplash.com/photo-1573790387438-4da905039392?q=80&w=3425&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        "https://images.unsplash.com/photo-1555400038-63f5ba517a47?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        "https://images.unsplash.com/photo-1554931670-4ebfabf6e7a9?q=80&w=3387&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        "https://images.unsplash.com/photo-1546484475-7f7bd55792da?q=80&w=2581&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    ];
-
-    const imageVariants = {
-        whileHover: {
-            scale: 1.1,
-            rotate: 0,
-            zIndex: 100,
-        },
-        whileTap: {
-            scale: 1.1,
-            rotate: 0,
-            zIndex: 100,
-        },
-    };
-    return (
-        <div className="relative flex flex-col items-start p-8 gap-10 h-full overflow-hidden">
-            {/* TODO */}
-            <div className="flex flex-row -ml-20">
-                {images.map((image, idx) => (
-                    <motion.div
-                        variants={imageVariants}
-                        key={"images-first" + idx}
-                        style={{
-                            rotate: Math.random() * 20 - 10,
-                        }}
-                        whileHover="whileHover"
-                        whileTap="whileTap"
-                        className="rounded-xl -mr-4 mt-4 p-1 bg-white dark:bg-neutral-800 dark:border-neutral-700 border border-neutral-100 shrink-0 overflow-hidden"
-                    >
-                        <img
-                            src={image}
-                            alt="bali images"
-                            width="500"
-                            height="500"
-                            className="rounded-lg h-20 w-20 md:h-40 md:w-40 object-cover shrink-0"
-                        />
-                    </motion.div>
-                ))}
-            </div>
-            <div className="flex flex-row">
-                {images.map((image, idx) => (
-                    <motion.div
-                        key={"images-second" + idx}
-                        style={{
-                            rotate: Math.random() * 20 - 10,
-                        }}
-                        variants={imageVariants}
-                        whileHover="whileHover"
-                        whileTap="whileTap"
-                        className="rounded-xl -mr-4 mt-4 p-1 bg-white dark:bg-neutral-800 dark:border-neutral-700 border border-neutral-100 shrink-0 overflow-hidden"
-                    >
-                        <img
-                            src={image}
-                            alt="bali images"
-                            width="500"
-                            height="500"
-                            className="rounded-lg h-20 w-20 md:h-40 md:w-40 object-cover shrink-0"
-                        />
-                    </motion.div>
-                ))}
-            </div>
-
-            <div className="absolute left-0 z-[100] inset-y-0 w-20 bg-gradient-to-r from-white dark:from-black to-transparent  h-full pointer-events-none" />
-            <div className="absolute right-0 z-[100] inset-y-0 w-20 bg-gradient-to-l from-white dark:from-black  to-transparent h-full pointer-events-none" />
-        </div>
-    );
-};
-
 export const SkeletonFour = () => {
     return (
-        <div className="h-60 md:h-60  flex flex-col items-center relative bg-transparent dark:bg-transparent mt-10">
+        <div className="h-60 md:h-60 flex flex-col items-center relative bg-transparent dark:bg-transparent mt-10">
             <Globe className="absolute -right-10 md:-right-10 -bottom-80 md:-bottom-72" />
         </div>
     );
@@ -296,13 +237,10 @@ export const Globe = ({ className }: { className?: string }) => {
             markerColor: [0.1, 0.8, 1],
             glowColor: [1, 1, 1],
             markers: [
-                // longitude latitude
                 { location: [37.7595, -122.4367], size: 0.03 },
                 { location: [40.7128, -74.006], size: 0.1 },
             ],
             onRender: (state) => {
-                // Called on every animation frame.
-                // `state` will be an empty object, return updated params.
                 state.phi = phi;
                 phi += 0.01;
             },

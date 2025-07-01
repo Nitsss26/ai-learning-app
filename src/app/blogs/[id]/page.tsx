@@ -1,8 +1,8 @@
 'use client'
 import FooterSection from "@/components/sections/FooterSection";
 import NavSection from "@/components/sections/NavSection";
-import { Stars } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
+// import { Stars } from "@react-three/drei";
+// import { Canvas } from "@react-three/fiber";
 
 
 export default function BlogsDetails() {
@@ -16,7 +16,7 @@ export default function BlogsDetails() {
                     </h4>
 
                     <p className="text-sm lg:text-base  max-w-2xl  my-4 mx-auto text-neutral-500 text-center font-normal dark:text-neutral-300">
-                        Dive into our comprehensive courses designed to help you master AI and Machine Learning. Whether you're a beginner or an expert, we have something for everyone.
+                        Dive into our comprehensive courses designed to help you master AI and Machine Learning. Whether you&apos;re a beginner or an expert, we have something for everyone.
                     </p>
                 </div>
             </div>
@@ -26,11 +26,11 @@ export default function BlogsDetails() {
 
 
             <FooterSection />
-            <div className="absolute inset-0 z-0 w-full h-full">
+            {/* <div className="absolute inset-0 z-0 w-full h-full">
                 <Canvas>
                     <Stars radius={100} count={2500} factor={3} fade speed={1} />
                 </Canvas>
-            </div>
+            </div> */}
 
         </div>
     );

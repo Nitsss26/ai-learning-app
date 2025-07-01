@@ -14,7 +14,7 @@ import {
 import { Tooltip } from "@heroui/tooltip";
 import { Chip } from "@heroui/chip";
 import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "../ui/chart";
-import { LineChart, CartesianGrid, XAxis, Line, Area, AreaChart } from "recharts";
+import {  CartesianGrid, XAxis, Area, AreaChart } from "recharts";
 
 export type SectionCardsProperties = {
     title: string;
