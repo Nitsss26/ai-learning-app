@@ -1,8 +1,9 @@
 'use client'
-import { Stars } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
+// import { Stars } from "@react-three/drei";
+// import { Canvas } from "@react-three/fiber";
 import { animate } from "motion";
 import { useMotionValue, useMotionTemplate, motion } from "motion/react";
+import Link from "next/link";
 import { useEffect } from "react";
 import { FiArrowRight } from "react-icons/fi";
 
@@ -41,6 +42,7 @@ export default function HeroSection() {
                 <p className="my-6 max-w-xl text-center text-base leading-relaxed md:text-lg md:leading-relaxed">
                     From automation to deep insights—our AI tools help you move faster, smarter, and more efficiently.
                 </p>
+                <Link href={'/courses'}>
                 <motion.button
                     style={{
                         border,
@@ -53,17 +55,18 @@ export default function HeroSection() {
                         scale: 0.985,
                     }}
                     className="group relative flex w-fit items-center gap-1.5 rounded-full bg-gray-950/10 px-4 py-2 text-gray-50 transition-colors hover:bg-gray-950/50"
-                >
+                    >
                     Explore Courses
                     <FiArrowRight className="transition-transform group-hover:-rotate-45 group-active:-rotate-12" />
                 </motion.button>
+                    </Link>
             </div>
 
-            <div className="absolute inset-0 z-0">
+            {/* <div className="absolute inset-0 z-0">
                 <Canvas>
                     <Stars radius={50} count={25000} factor={4} fade speed={2} />
                 </Canvas>
-            </div>
+            </div> */}
         </motion.section>
     );
 };

@@ -3,13 +3,13 @@ import FooterSection from "@/components/sections/FooterSection";
 import NavSection from "@/components/sections/NavSection";
 import { Stars } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { CourseList } from "../page";
+// import { CourseList } from "../page";
 import { IconClockHour3, IconUsersGroup, IconStarFilled, IconGrowth, IconBriefcase, IconCertificate, IconDeviceTvOld, IconHeadset, IconListDetails, IconMap, IconRouteSquare, IconStar } from "@tabler/icons-react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import Image from "next/image";
-import CountUp from "react-countup";
+// import Image from "next/image";
+// import CountUp from "react-countup";
 import CourseReviewsSection from "@/components/sections/CourseReviewsSection";
 
 
@@ -25,7 +25,7 @@ export default function Page() {
                 </h4>
 
                 <p className="text-sm lg:text-base w-full md:w-[50%] my-4 mx-auto  text-neutral-500 text-center">
-                    Dive into our comprehensive courses designed to help you master AI and Machine Learning. Whether you're a beginner or an expert, we have something for everyone.
+                    Dive into our comprehensive courses designed to help you master AI and Machine Learning. Whether you&apos;re a beginner or an expert, we have something for everyone.
                 </p>
                 <FeaturesContent />
             </div>
@@ -43,20 +43,40 @@ export default function Page() {
                     duration: 0.3,
                     delay: 1.2,
                 }}
-                className="relative w-[90%] md:w-[80%] z-1000 mt-10 rounded-3xl border border-neutral-200 bg-neutral-100 p-2 md:p-4 shadow-md dark:border-neutral-800 dark:bg-neutral-900"
+                className="relative w-[90%] md:w-[80%] z-1000 mt-10 rounded-3xl border border-neutral-200 bg-neutral-100 p-4 shadow-md dark:border-neutral-800 dark:bg-neutral-900"
             >
-                <div className="w-[100%] overflow-hidden rounded-xl border border-gray-300 dark:border-gray-700">
-                    <iframe className="xl:w-[100%] xl:h-[500px] w-[100%] h-[200px]" src="https://www.youtube.com/embed/qYNweeDHiyU?si=3dY9f2cQQo37AYwo" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" ></iframe>
+                <div className="flex flex-col md:flex-row gap-4">
+                    {/* Left Side - Video */}
+                    <div className="w-full md:w-1/2 overflow-hidden rounded-xl border border-gray-300 dark:border-gray-700">
+                        <iframe
+                            className="w-full h-[200px] md:h-[300px] xl:h-[400px]"
+                            src="https://www.youtube.com/embed/qYNweeDHiyU?si=3dY9f2cQQo37AYwo"
+                            title="YouTube video player"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        ></iframe>
+                    </div>
+
+                    {/* Right Side - Course Info */}
+                    <div className="w-full md:w-1/2 flex flex-col justify-center px-2 md:px-4">
+                        <h1 className="text-3xl lg:text-5xl lg:leading-tight  font-medium text-black dark:text-white">Course Overview</h1>
+                        <p className="text-base text-gray-700 dark:text-gray-300">
+                            Master the foundational concepts of Mechanic and Electrodynamics tailored for the IIT-JEE Physics syllabus. This course covers motion, Newton&apos;s laws, work-energy, circuits, electrostatics, and magnetism with crystal-clear explanations and problem-solving strategies.
+                            Build confidence through structured lessons, conceptual clarity, and guided practice.
+                            Perfect for aspirants aiming for top ranks, this course bridges theory and application seamlessly.
+
+                        </p>
+                    </div>
                 </div>
             </motion.div>
 
-            <StatsSection />
-            <Team />
-            <CourseBenefits />
-            <Modules />
-            <CourseReviewsSection />
+
             <CourseDescription />
+            {/* <StatsSection /> */}
+            <Modules />
+            <Team />
+            <CourseReviewsSection />
             <Accordion />
+            <CourseBenefits />
             <FooterSection />
             <div className="absolute inset-0 z-0 w-screen">
                 <Canvas>
@@ -317,10 +337,15 @@ const Accordion = () => {
 
 
 
-const AccordionItem = ({ header, text }) => {
+interface AccordionItemProps {
+    header: string;
+    text: string;
+}
+
+const AccordionItem = ({ header, text }: AccordionItemProps) => {
     const [active, setActive] = useState(false);
 
-    const handleToggle = () => {
+    const handleToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         setActive(!active);
     };
@@ -328,7 +353,7 @@ const AccordionItem = ({ header, text }) => {
         <div className="mb-8 w-full rounded-lg border-[0.1px] border-gray-400 p-4 shadow-[0px_20px_95px_0px_rgba(201,203,204,0.30)] dark:bg-dark-2 dark:shadow-[0px_20px_95px_0px_rgba(0,0,0,0.30)] sm:p-8 lg:px-6 xl:px-8">
             <button
                 className={`faq-btn flex w-full text-left`}
-                onClick={() => handleToggle()}
+                onClick={handleToggle}
             >
                 <div className="flex h-10 w-full max-w-[40px] items-center justify-center rounded-lg bg-primary/5 text-white">
                     <svg
@@ -377,7 +402,7 @@ const Team = () => {
                     <div className="w-full">
                         <div className="mx-auto mb-[60px] max-w-[510px] text-center">
                             <span className="mb-2 block text-lg font-semibold text-gray-200">
-                                Our Team
+                                Educators
                             </span>
                             <h2 className="mb-3 text-3xl font-bold leading-[1.2] text-white sm:text-4xl md:text-[40px]">
                                 Our Awesome Team
@@ -419,7 +444,13 @@ const Team = () => {
 };
 
 
-const TeamMemberCard = ({ imageSrc, name, jobTitle }) => (
+interface TeamMemberCardProps {
+    imageSrc: string;
+    name: string;
+    jobTitle: string;
+}
+
+const TeamMemberCard = ({ imageSrc, name, jobTitle }: TeamMemberCardProps) => (
     <div className="w-full px-4 md:w-1/2 xl:w-1/4">
         <div className="mb-10 w-full">
             <div className="relative overflow-hidden rounded-lg">
@@ -613,68 +644,68 @@ const TeamMemberCard = ({ imageSrc, name, jobTitle }) => (
 
 
 
-const StatsSection = () => {
-    return (
-        <section className=" py-20 lg:py-[120px] dark:bg-dark ]">
-            <div className="max-w-5xl mx-auto text-center px-4">
-                <h2 className="text-xl md:text-2xl font-medium text-gray-100">
-                    BUILD TRUST WITH YOUR USERS WITH A{' '}
-                    <span className="text-indigo-600">BEAUTIFUL LANDING PAGE</span>
-                </h2>
+// const StatsSection = () => {
+//     return (
+//         <section className=" py-20 lg:py-[120px] dark:bg-dark ]">
+//             <div className="max-w-5xl mx-auto text-center px-4">
+//                 <h2 className="text-xl md:text-2xl font-medium text-gray-100">
+//                     BUILD TRUST WITH YOUR USERS WITH A{' '}
+//                     <span className="text-indigo-600">BEAUTIFUL LANDING PAGE</span>
+//                 </h2>
 
-                <div className="mt-12 flex flex-wrap justify-center gap-8 text-center items-center">
-                    {/* Stat 1 */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                    >
-                        <h3 className="text-5xl font-bold text-white">
-                            <CountUp end={45} suffix="%" duration={2} />
-                        </h3>
-                        <p className="mt-4 text-gray-200">Lorem ipsum dolor sit amet consectetur</p>
-                    </motion.div>
+//                 <div className="mt-12 flex flex-wrap justify-center gap-8 text-center items-center">
+//                     {/* Stat 1 */}
+//                     <motion.div
+//                         initial={{ opacity: 0, y: 20 }}
+//                         animate={{ opacity: 1, y: 0 }}
+//                         transition={{ delay: 0.2 }}
+//                     >
+//                         <h3 className="text-5xl font-bold text-white">
+//                             <CountUp end={45} suffix="%" duration={2} />
+//                         </h3>
+//                         <p className="mt-4 text-gray-200">Lorem ipsum dolor sit amet consectetur</p>
+//                     </motion.div>
 
 
-                    {/* Stat 2 */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.4 }}
-                    >
-                        <h3 className="text-5xl font-bold text-white">
-                            <CountUp end={15500} separator="," suffix="+" duration={2} />
-                        </h3>
-                        <p className="mt-4 text-gray-200">Lorem ipsum dolor sit amet consectetur</p>
-                    </motion.div>
+//                     {/* Stat 2 */}
+//                     <motion.div
+//                         initial={{ opacity: 0, y: 20 }}
+//                         animate={{ opacity: 1, y: 0 }}
+//                         transition={{ delay: 0.4 }}
+//                     >
+//                         <h3 className="text-5xl font-bold text-white">
+//                             <CountUp end={15500} separator="," suffix="+" duration={2} />
+//                         </h3>
+//                         <p className="mt-4 text-gray-200">Lorem ipsum dolor sit amet consectetur</p>
+//                     </motion.div>
 
-                    {/* Stat 3 */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.6 }}
-                    >
-                        <h3 className="text-5xl font-bold text-white">
-                            <CountUp end={20} suffix="B+" duration={2.5} />
-                        </h3>
-                        <p className="mt-4 text-gray-200">Lorem ipsum dolor sit amet consectetur</p>
-                    </motion.div>
-                    {/* Stat 3 */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.6 }}
-                    >
-                        <h3 className="text-5xl font-bold text-white">
-                            <CountUp end={100000} suffix="+" duration={2.5} />
-                        </h3>
-                        <p className="mt-4 text-gray-200">Lorem ipsum dolor sit amet consectetur</p>
-                    </motion.div>
-                </div>
-            </div>
-        </section>
-    );
-};
+//                     {/* Stat 3 */}
+//                     <motion.div
+//                         initial={{ opacity: 0, y: 20 }}
+//                         animate={{ opacity: 1, y: 0 }}
+//                         transition={{ delay: 0.6 }}
+//                     >
+//                         <h3 className="text-5xl font-bold text-white">
+//                             <CountUp end={20} suffix="B+" duration={2.5} />
+//                         </h3>
+//                         <p className="mt-4 text-gray-200">Lorem ipsum dolor sit amet consectetur</p>
+//                     </motion.div>
+//                     {/* Stat 3 */}
+//                     <motion.div
+//                         initial={{ opacity: 0, y: 20 }}
+//                         animate={{ opacity: 1, y: 0 }}
+//                         transition={{ delay: 0.6 }}
+//                     >
+//                         <h3 className="text-5xl font-bold text-white">
+//                             <CountUp end={100000} suffix="+" duration={2.5} />
+//                         </h3>
+//                         <p className="mt-4 text-gray-200">Lorem ipsum dolor sit amet consectetur</p>
+//                     </motion.div>
+//                 </div>
+//             </div>
+//         </section>
+//     );
+// };
 
 
 
@@ -763,10 +794,15 @@ const Modules = () => {
 
 
 
-const ModuleLession = ({ header, text }) => {
+interface ModuleLessionProps {
+    header: string;
+    text: string;
+}
+
+const ModuleLession = ({ header }: ModuleLessionProps) => {
     const [active, setActive] = useState(false);
 
-    const handleToggle = () => {
+    const handleToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         setActive(!active);
     };
@@ -774,7 +810,7 @@ const ModuleLession = ({ header, text }) => {
         <div className="mb-8 w-full rounded-lg border-b-[0.1px] border-gray-400 p-4 shadow-[0px_20px_95px_0px_rgba(201,203,204,0.30)] dark:bg-dark-2 dark:shadow-[0px_20px_95px_0px_rgba(0,0,0,0.30)] sm:p-8 lg:px-6 xl:px-8">
             <button
                 className={`faq-btn flex w-full text-left`}
-                onClick={() => handleToggle()}
+                onClick={handleToggle}
             >
                 <div className="mr-5 flex h-10 w-full max-w-[40px] items-center justify-center rounded-lg bg-primary/5 text-white">
                     <svg
