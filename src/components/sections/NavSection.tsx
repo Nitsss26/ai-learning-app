@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import {IconMenu2 } from "@tabler/icons-react";
+import { IconMenu, IconMenu2, IconMenu3 } from "@tabler/icons-react";
 import Link from "next/link";
 import React, { useState } from "react";
 
@@ -64,7 +64,6 @@ const NavSection = () => {
                                     <ListItem NavLink="/courses" className="text-white hover:text-primary">Courses</ListItem>
                                     <ListItem NavLink="/blogs" className="text-white hover:text-primary">Blogs</ListItem>
                                     <ListItem NavLink="/about" className="text-white hover:text-primary">About</ListItem>
-                                    <ListItem NavLink="/dashboard" className="text-white hover:text-primary">Dashboard</ListItem>
                                 </ul>
                             </nav>
                         </div>

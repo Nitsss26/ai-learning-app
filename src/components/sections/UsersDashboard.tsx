@@ -3,7 +3,6 @@ import { IconCalendar } from "@tabler/icons-react";
 import { HeadingCard, HeadingProperties } from "./Dashboard";
 
 import React from "react";
-import Image from "next/image";
 import {
     Table,
     TableHeader,
@@ -15,7 +14,7 @@ import {
 import { Tooltip } from "@heroui/tooltip";
 import { Chip } from "@heroui/chip";
 import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "../ui/chart";
-import {  CartesianGrid, XAxis, Area, AreaChart } from "recharts";
+import { LineChart, CartesianGrid, XAxis, Line, Area, AreaChart } from "recharts";
 
 export type SectionCardsProperties = {
     title: string;
@@ -227,18 +226,7 @@ export const columns = [
     { name: "ACTIONS", uid: "actions" },
 ];
 
-export interface User {
-    id: number;
-    name: string;
-    role: string;
-    team: string;
-    status: "active" | "paused" | "vacation";
-    age: string;
-    avatar: string;
-    email: string;
-}
-
-export const users: User[] = [
+export const users = [
     {
         id: 1,
         name: "Tony Reichert",
@@ -393,18 +381,18 @@ export const users: User[] = [
 
 
 
-// import { TrendingUp } from "lucide-react"
+import { TrendingUp } from "lucide-react"
 
 import {
     Card,
     CardContent,
     CardDescription,
-    // CardFooter,
+    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-// import { SelectTrigger, SelectValue, SelectContent, SelectItem } from "@radix-ui/react-select";
-// import { Select } from "@react-three/drei";
+import { SelectTrigger, SelectValue, SelectContent, SelectItem } from "@radix-ui/react-select";
+import { Select } from "@react-three/drei";
 
 
 
@@ -432,7 +420,7 @@ export function ChartLineDefault() {
 }
 
 
-export const EyeIcon = (props: React.SVGProps<SVGSVGElement>) => {
+export const EyeIcon = (props) => {
     return (
         <svg
             aria-hidden="true"
@@ -462,7 +450,7 @@ export const EyeIcon = (props: React.SVGProps<SVGSVGElement>) => {
     );
 };
 
-export const DeleteIcon = (props: React.SVGProps<SVGSVGElement>) => {
+export const DeleteIcon = (props) => {
     return (
         <svg
             aria-hidden="true"
@@ -513,7 +501,7 @@ export const DeleteIcon = (props: React.SVGProps<SVGSVGElement>) => {
     );
 };
 
-export const EditIcon = (props: React.SVGProps<SVGSVGElement>) => {
+export const EditIcon = (props) => {
     return (
         <svg
             aria-hidden="true"
@@ -551,33 +539,38 @@ export const EditIcon = (props: React.SVGProps<SVGSVGElement>) => {
             />
         </svg>
     );
-}
+};
 
-const statusColorMap: Record<User["status"], "success" | "danger" | "warning" | "default" | "primary" | "secondary"> = {
+const statusColorMap = {
     active: "success",
     paused: "danger",
     vacation: "warning",
 };
 
 export function UsersList() {
-    const renderCell = React.useCallback((user: User, columnKey: keyof User | "actions") => {
-        const cellValue = user[columnKey as keyof User];
+    const renderCell = React.useCallback((user, columnKey) => {
+        const cellValue = user[columnKey];
 
         switch (columnKey) {
             case "name":
+            case "name":
                 return (
-                    <div className="flex items-center gap-2">
-                        <Image
+                    <div className="flex items-center gap-3">
+                        <img
                             src={user.avatar}
-                            alt={typeof cellValue === "string" ? cellValue : String(cellValue)}
-                            width={32}
-                            height={32}
+                            alt={cellValue}
                             className="w-8 h-8 rounded-lg object-cover"
                         />
                         <div className="flex flex-col">
                             <span className="font-medium">{cellValue}</span>
                             <span className="text-xs text-default-400">{user.email}</span>
                         </div>
+                    </div>
+                );
+                return (
+                    <div className="flex flex-col">
+                        <p className="text-bold text-sm capitalize">{cellValue}</p>
+                        <p className="text-bold text-sm capitalize text-default-400">{user.team}</p>
                     </div>
                 );
             case "status":
@@ -623,7 +616,7 @@ export function UsersList() {
             <TableBody items={users}>
                 {(item) => (
                     <TableRow key={item.id} className="group hover:scale(1.02) duration-100 rounded-2xl hover:bg-blue-600/10">
-                        {(columnKey) => <TableCell>{renderCell(item, columnKey as keyof User | "actions")}</TableCell>}
+                        {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
                     </TableRow>
                 )}
             </TableBody>
