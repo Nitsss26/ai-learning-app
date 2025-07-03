@@ -13,11 +13,11 @@ import {
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "motion/react";
-import { ImageProps } from "next/image";
+import Image, { ImageProps } from "next/image";
 import { useOutsideClick } from "@/hooks/use-outside-click";
 
 interface CarouselProps {
-  items: JSX.Element[];
+  items: React.ReactElement[];
   initialScroll?: number;
 }
 
@@ -121,7 +121,6 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
                     duration: 0.5,
                     delay: 0.2 * index,
                     ease: "easeOut",
-                    once: true,
                   },
                 }}
                 key={"card" + index}
@@ -157,7 +156,7 @@ export const Card = ({
   card,
   index,
   layout = false,
-  onClick = {},
+  // onClick = {},
 }: {
   card: Card;
   index: number;
@@ -165,8 +164,13 @@ export const Card = ({
   onClick?: () => void;
 }) => {
   const [open, setOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { onCardClose, currentIndex } = useContext(CarouselContext);
+  const containerRef = useRef<HTMLDivElement>(null!);
+  const { onCardClose } = useContext(CarouselContext);
+
+  const handleClose = React.useCallback(() => {
+    setOpen(false);
+    onCardClose(index);
+  }, [onCardClose, index]);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -183,17 +187,12 @@ export const Card = ({
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open]);
+  }, [open, handleClose]);
 
   useOutsideClick(containerRef, () => handleClose());
 
   const handleOpen = () => {
     setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    onCardClose(index);
   };
 
   return (
@@ -277,17 +276,14 @@ export const BlurImage = ({
   alt,
   ...rest
 }: ImageProps) => {
-  const [isLoading, setLoading] = useState(true);
   return (
-    <img
+    <Image
       className={cn("h-full w-full transition duration-300", className)}
-      onLoad={() => setLoading(false)}
-      src={src as string}
+      src={src}
       width={width}
       height={height}
-      loading="lazy"
-      decoding="async"
       alt={alt ? alt : "Background of a beautiful view"}
+      loading="lazy"
       {...rest}
     />
   );
