@@ -15,7 +15,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function Page() {
-    const COLORS_TOP = ["#13FFAA", "#1E67C6", "#CE84CF", "#DD335C"];
+    const COLORS_TOP = React.useMemo(() => ["#13FFAA", "#1E67C6", "#CE84CF", "#DD335C"], []);
     const color = useMotionValue(COLORS_TOP[0]);
     
     
@@ -26,7 +26,7 @@ export default function Page() {
             repeat: Infinity,
             repeatType: "mirror",
         });
-    }, []);
+    }, [COLORS_TOP, color]);
 
     const backgroundImage = useMotionTemplate`radial-gradient(125% 125% at 50% 0%, #020617 50%, ${color})`;
     const border = useMotionTemplate`1px solid ${color}`;

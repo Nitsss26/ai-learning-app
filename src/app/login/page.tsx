@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 export default function LoginPage() {
-    const COLORS_TOP = ["#13FFAA", "#1E67C6", "#CE84CF", "#DD335C"];
+    const COLORS_TOP = React.useMemo(() => ["#13FFAA", "#1E67C6", "#CE84CF", "#DD335C"], []);
     const color = useMotionValue(COLORS_TOP[0]);
 
     useEffect(() => {
@@ -25,7 +25,7 @@ export default function LoginPage() {
             repeat: Infinity,
             repeatType: "mirror",
         });
-    }, []);
+    }, [COLORS_TOP, color]);
 
     const backgroundImage = useMotionTemplate`radial-gradient(125% 125% at 50% 0%, #020617 50%, ${color})`;
     const border = useMotionTemplate`1px solid ${color}`;

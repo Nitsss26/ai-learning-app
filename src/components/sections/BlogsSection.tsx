@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Carousel, Card } from "@/components/ui/cards-carousel";
 import Link from "next/link";
+import Image from "next/image";
 // import { useState } from "react";
 import axios from "axios";
 
@@ -105,14 +106,14 @@ const DummyContent = () => {
               class notes. Want to convert those notes to text? No problem.
               Langotiya jeetu ka mara hua yaar is ready to capture every
               thought.
-            </p>
-            <img
+            <Image
               src="https://assets.aceternity.com/macbook.png"
               alt="Macbook mockup from Aceternity UI"
-              height="500"
-              width="500"
+              height={500}
+              width={500}
               className="md:w-1/2 md:h-1/2 h-full w-full mx-auto object-contain"
             />
+            </p>
           </div>
         );
       })}
