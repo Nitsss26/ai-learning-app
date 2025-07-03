@@ -11,6 +11,7 @@ import createGlobe from "cobe";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { useRef, useEffect, useState } from "react";
+import Image from "next/image";
 
 
 export default function Courses() {
@@ -248,14 +249,14 @@ export const SkeletonImage = (url: string) => {
         <div className="relative flex my-8 mx-2 gap-10 h-[400px] md:h-[500px] group rounded-2xl">
             <div className="w-full  p-5  mx-auto bg-white dark:bg-neutral-900 shadow-2xl group h-full">
                 <div className="flex flex-1 w-full h-full flex-col space-y-2  ">
-                    {/* TODO */}
-                    <img
+                    <Image
                         src={url}
                         alt="header"
                         width={600}
                         height={600}
-                        className="h-full w-full aspect-square object-cover object-left-top rounded-sm object-center content-center"
+                        className="h-full w-full aspect-square object-cover rounded-sm content-center"
                     />
+                   
                 </div>
             </div>
 
@@ -276,7 +277,7 @@ export const SkeletonThree = () => {
                 <div className="flex flex-1 w-full h-full flex-col space-y-2  relative">
                     {/* TODO */}
                     <IconBrandYoutubeFilled className="h-20 w-20 absolute z-10 inset-0 text-red-500 m-auto " />
-                    <img
+                    <Image
                         src="https://assets.aceternity.com/fireship.jpg"
                         alt="header"
                         width={800}
@@ -329,11 +330,11 @@ export const SkeletonTwo = () => {
                         whileTap="whileTap"
                         className="rounded-xl -mr-4 mt-4 p-1 bg-white dark:bg-neutral-800 dark:border-neutral-700 border border-neutral-100 shrink-0 overflow-hidden"
                     >
-                        <img
+                        <Image
                             src={image}
                             alt="bali images"
-                            width="500"
-                            height="500"
+                            width={500}
+                            height={500}
                             className="rounded-lg h-20 w-20 md:h-40 md:w-40 object-cover shrink-0"
                         />
                     </motion.div>
@@ -351,11 +352,11 @@ export const SkeletonTwo = () => {
                         whileTap="whileTap"
                         className="rounded-xl -mr-4 mt-4 p-1 bg-white dark:bg-neutral-800 dark:border-neutral-700 border border-neutral-100 shrink-0 overflow-hidden"
                     >
-                        <img
+                        <Image
                             src={image}
                             alt="bali images"
-                            width="500"
-                            height="500"
+                            width={500}
+                            height={500}
                             className="rounded-lg h-20 w-20 md:h-40 md:w-40 object-cover shrink-0"
                         />
                     </motion.div>

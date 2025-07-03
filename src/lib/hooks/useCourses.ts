@@ -1,6 +1,6 @@
 "use client"
 
-import { createClient } from "@/lib/supabase/client"
+// import { createClient } from "@/lib/supabase/client"
 import { useEffect, useState } from "react"
 
 export function useCourses(filters?: {
@@ -11,7 +11,7 @@ export function useCourses(filters?: {
   const [courses, setCourses] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const supabase = createClient()
+  // const supabase = createClient()
 
   useEffect(() => {
     const fetchCourses = async () => {

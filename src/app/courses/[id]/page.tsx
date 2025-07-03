@@ -8,7 +8,7 @@ import { IconClockHour3, IconUsersGroup, IconStarFilled, IconGrowth, IconBriefca
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-// import Image from "next/image";
+import Image from "next/image";
 // import CountUp from "react-countup";
 import CourseReviewsSection from "@/components/sections/CourseReviewsSection";
 
@@ -454,7 +454,7 @@ const TeamMemberCard = ({ imageSrc, name, jobTitle }: TeamMemberCardProps) => (
     <div className="w-full px-4 md:w-1/2 xl:w-1/4">
         <div className="mb-10 w-full">
             <div className="relative overflow-hidden rounded-lg">
-                <img src={imageSrc} alt="" className="w-full" />
+                <Image src={imageSrc} alt={name} className="w-full" width={400} height={400} />
                 <div className="absolute bottom-5 left-0 w-full text-center">
                     <div className="relative mx-5 overflow-hidden rounded-lg bg-white px-3 py-5 dark:bg-dark-2">
                         <h3 className="text-base font-semibold text-[#020b1a]">

@@ -322,6 +322,7 @@ import { IconCalendar } from "@tabler/icons-react";
 import axios from "axios";
 import { motion } from "motion/react";
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 type BlogCard = {
@@ -413,12 +414,15 @@ export default function Blogs() {
                   <p className="mt-2 max-w-xs text-left text-xl font-semibold text-white md:text-3xl">
                     {card.title}
                   </p>
-                </div>
-                <img
+                <Image
                   className={cn("absolute inset-0 h-full w-full object-cover transition duration-300")}
                   src={card.src}
                   alt={card.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 384px"
+                  priority={index < 2}
                 />
+                </div>
               </motion.button>
             </Link>
           </motion.div>

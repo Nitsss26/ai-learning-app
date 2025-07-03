@@ -11,6 +11,7 @@ import {
 } from "@tabler/icons-react";
 import Link from "next/link";
 import axios from "axios";
+import Image from "next/image";
 
 export default function CoursesSection() {
     // const features = [
@@ -97,29 +98,29 @@ export default function CoursesSection() {
                     <p className="text-sm lg:text-base max-w-2xl my-4 mx-auto text-neutral-500 text-center font-normal dark:text-neutral-300">
                         Dive into our comprehensive courses designed to help you master AI and Machine Learning. Whether you&apos;re a beginner or an expert, we have something for everyone.
                     </p>
-                </div>
 
-                <div className="relative w-full">
-                    <div className="grid grid-cols-1 lg:grid-cols-6 mt-12 xl:border rounded-md dark:border-neutral-800">
-                        {loading?
-                        "Loading ..."
-                        :
-                        features.map((feature) => (
-                            <FeatureCard key={feature.title} className={feature.className}>
-                                <FeatureTitle>{feature.title}</FeatureTitle>
-                                <FeatureDescription>{feature.description}</FeatureDescription>
-                                <FeaturesContent />
-                                {feature.skeleton}
-                            </FeatureCard>
-                        ))} 
+                    <div className="relative w-full">
+                        <div className="grid grid-cols-1 lg:grid-cols-6 mt-12 xl:border rounded-md dark:border-neutral-800">
+                            {loading?
+                            "Loading ..."
+                            :
+                            features.map((feature) => (
+                                <FeatureCard key={feature.title} className={feature.className}>
+                                    <FeatureTitle>{feature.title}</FeatureTitle>
+                                    <FeatureDescription>{feature.description}</FeatureDescription>
+                                    <FeaturesContent />
+                                    {feature.skeleton}
+                                </FeatureCard>
+                            ))} 
+                        </div>
                     </div>
+                    
+                    <Link href={'/courses'}>
+                        <button className=" cursor-pointer w-60 mt-4 transform rounded-lg border border-gray-300 bg-white px-6 py-2 font-medium text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:bg-gray-900">
+                            Explore More Courses
+                        </button>
+                    </Link>
                 </div>
-                
-                <Link href={'/courses'}>
-                <button className=" cursor-pointer w-60 mt-4 transform rounded-lg border border-gray-300 bg-white px-6 py-2 font-medium text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:bg-gray-900">
-                    Explore More Courses
-                </button>
-                </Link>
             </div>
         </section>
     );
@@ -149,7 +150,7 @@ const FeatureTitle = ({ children }: { children?: React.ReactNode }) => {
 
 const FeatureDescription = ({ children }: { children?: React.ReactNode }) => {
     return (
-        <p className="text-sm md:text-base max-w-4xl text-left mx-auto text-neutral-500 font-normal dark:text-neutral-300 text-left max-w-sm mx-0 md:text-sm my-2">
+        <p className="text-sm md:text-base max-w-4xl text-left mx-auto text-neutral-500 font-normal dark:text-neutral-300 my-2">
             {children}
         </p>
     );
@@ -190,17 +191,14 @@ export const SkeletonImage = (url: string) => {
     return (
         <div className="relative flex my-8 mx-2 gap-10 h-[400px] md:h-[500px] group rounded-2xl">
             <div className="w-full p-5 mx-auto bg-white dark:bg-neutral-900 shadow-2xl group h-full">
-                <div className="flex flex-1 w-full h-full flex-col space-y-2">
-                    <img
-                        src={url}
-                        alt="Course preview"
-                        width={600}
-                        height={600}
-                        className="h-full w-full aspect-square object-cover object-left-top rounded-sm object-center"
-                    />
-                </div>
+                <Image
+                    src={url}
+                    alt="Course preview"
+                    width={600}
+                    height={600}
+                    className="h-full w-full aspect-square object-cover rounded-sm object-center"
+                />
             </div>
-
             <div className="absolute bottom-0 z-40 inset-x-0 h-60 bg-gradient-to-t from-white dark:from-black via-white dark:via-black to-transparent w-full pointer-events-none" />
             <div className="absolute top-0 z-40 inset-x-0 h-60 bg-gradient-to-b from-white dark:from-black via-transparent to-transparent w-full pointer-events-none" />
         </div>

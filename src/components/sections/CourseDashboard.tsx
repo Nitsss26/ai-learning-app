@@ -1,5 +1,6 @@
 'use client';
 import Link from "next/link";
+import Image from "next/image";
 import { ProgressBar } from "../ui/progress";
 
 interface Course {
@@ -52,12 +53,16 @@ export const CourseDashboard = ({ courses }: CourseDashboardProps) => {
                 className={`rounded-2xl overflow-hidden ${bgGradient} backdrop-blur-xl border border-white/10 transition-all duration-300 shadow-md hover:shadow-2xl hover:scale-[1.02] flex flex-col`}
               >
                 {/* Image */}
-                <div className="relative">
-                  <img
+                  <Image
                     src={course.image || "/images/default-course.jpg"}
                     alt={course.title}
+                    width={400}
+                    height={160}
                     className="w-full h-40 object-cover transition duration-300 group-hover:brightness-90"
+                    style={{ width: "100%", height: "160px", objectFit: "cover" }}
+                    priority
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 </div>
 
@@ -82,7 +87,6 @@ export const CourseDashboard = ({ courses }: CourseDashboardProps) => {
                     <ProgressBar value={course.progress} />
                   </div>
                 </div>
-              </div>
             </Link>
           );
         })}
