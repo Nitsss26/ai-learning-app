@@ -1,14 +1,14 @@
-// import { Stars } from "@react-three/drei";
-// import { Canvas } from "@react-three/fiber";
+import { Stars } from "@react-three/drei";
+import { Canvas } from "@react-three/fiber";
 import Link from "next/link";
 import React from "react";
 
 const FooterSection = () => {
   return (
     <>
-      <footer className="relative z-10 bg-[#020617] pb-6 pt-20 px-6 dark:bg-dark lg:pb-20 lg:pt-[120px] container">
-        <div className="w-full">
-          <div className="flex flex-wrap justify-between lg:space-x-6">
+      <footer className="relative z-10  bg-[#020617] pb-6 pt-20 pl-6 pr-6 dark:bg-dark lg:pb-20 lg:pt-[120px]">
+        <div className="container">
+          <div className="flex flex-wrap space-between lg:space-x-6">
             <div className="w-full sm:w-2/3 lg:w-3/12">
               <div className="mb-10 w-full">
                 <Link href="/#" className="mb-6 inline-block max-w-[160px]">
@@ -190,11 +190,11 @@ const FooterSection = () => {
             </svg>
           </span>
         </div>
-        {/* <div className="absolute inset-0 z-0 w-screen">
-          <Canvas className="w-full">
+        <div className="absolute inset-0 z-0">
+          <Canvas>
             <Stars radius={50} count={1000} factor={4} fade speed={2} />
           </Canvas>
-        </div> */}
+        </div>
       </footer>
     </>
   );
@@ -202,9 +202,7 @@ const FooterSection = () => {
 
 export default FooterSection;
 
-type LinkGroupProps = React.PropsWithChildren<{ header: string }>;
-
-const LinkGroup = ({ children, header }: LinkGroupProps) => {
+const LinkGroup = ({ children, header }) => {
   return (
     <>
       <div className="w-full px-4 sm:w-1/2 lg:w-2/12">
@@ -219,12 +217,7 @@ const LinkGroup = ({ children, header }: LinkGroupProps) => {
   );
 };
 
-type NavLinkProps = {
-  link: string;
-  label: string;
-};
-
-const NavLink = ({ link, label }: NavLinkProps) => {
+const NavLink = ({ link, label }) => {
   return (
     <li>
       <Link

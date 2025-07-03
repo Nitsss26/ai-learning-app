@@ -1,47 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import axios from "axios";
-import React, { useState } from "react";
+import React from "react";
 
 const ContactSection = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    message: "",
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    // console.log("Form Data:", formData);
-  };
-  // console.log("Form Data:", formData);
-
-  const [status, setStatus] = useState<string | null>(null);
-
- 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setStatus("loading");
-
-  try {
-    const res = await axios.post("/api/contact", formData, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (res.status === 200) {
-      setStatus("success");
-      setFormData({ name: "", email: "", phone: "", message: "" });
-    } else {
-      setStatus(res.data?.error || "Something went wrong");
-    }
-  } catch (err: any) {
-    console.error(err);
-    setStatus(err.response?.data?.error || "Server error");
-  }
-};
-
   return (
     <>
       <section className="relative z-10 p-4 md:p-10 xl:p-16 lg:p-20 overflow-hidden bg-[#020617] dark:bg-dark lg:py-[120px]">
@@ -94,7 +53,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
                     >
-                      <g clipPath="url(#clip0_941_17577)">
+                      <g clip-path="url(#clip0_941_17577)">
                         <path
                           d="M24.3 31.1499C22.95 31.1499 21.4 30.7999 19.7 30.1499C16.3 28.7999 12.55 26.1999 9.19997 22.8499C5.84997 19.4999 3.24997 15.7499 1.89997 12.2999C0.39997 8.59994 0.54997 5.54994 2.29997 3.84994C2.34997 3.79994 2.44997 3.74994 2.49997 3.69994L6.69997 1.19994C7.74997 0.599942 9.09997 0.899942 9.79997 1.89994L12.75 6.29994C13.45 7.34994 13.15 8.74994 12.15 9.44994L10.35 10.6999C11.65 12.7999 15.35 17.9499 21.25 21.6499L22.35 20.0499C23.2 18.8499 24.55 18.4999 25.65 19.2499L30.05 22.1999C31.05 22.8999 31.35 24.2499 30.75 25.2999L28.25 29.4999C28.2 29.5999 28.15 29.6499 28.1 29.6999C27.2 30.6499 25.9 31.1499 24.3 31.1499ZM3.79997 5.54994C2.84997 6.59994 2.89997 8.74994 3.99997 11.4999C5.24997 14.6499 7.64997 18.0999 10.8 21.2499C13.9 24.3499 17.4 26.7499 20.5 27.9999C23.2 29.0999 25.35 29.1499 26.45 28.1999L28.85 24.0999C28.85 24.0499 28.85 24.0499 28.85 23.9999L24.45 21.0499C24.45 21.0499 24.35 21.0999 24.25 21.2499L23.15 22.8499C22.45 23.8499 21.1 24.1499 20.1 23.4999C13.8 19.5999 9.89997 14.1499 8.49997 11.9499C7.84997 10.8999 8.09997 9.54994 9.09997 8.84994L10.9 7.59994V7.54994L7.94997 3.14994C7.94997 3.09994 7.89997 3.09994 7.84997 3.14994L3.79997 5.54994Z"
                           fill="currentColor"
@@ -153,56 +112,36 @@ const handleSubmit = async (e: React.FormEvent) => {
             </div>
             <div className="w-full px-4 lg:w-1/2 xl:w-5/12">
               <div className="relative rounded-lg bg-white p-8 shadow-lg dark:bg-dark-2 sm:p-12">
-                <form onSubmit={handleSubmit}>
+                <form>
                   <ContactInputBox
                     type="text"
                     name="name"
                     placeholder="Your Name"
-                    value={formData.name}
-                    onChange={handleChange}
-
                   />
                   <ContactInputBox
                     type="text"
                     name="email"
                     placeholder="Your Email"
-                    value={formData.email}
-                    onChange={handleChange}
-
                   />
                   <ContactInputBox
                     type="text"
                     name="phone"
                     placeholder="Your Phone"
-                    value={formData.phone}
-                   onChange={handleChange}
-
                   />
                   <ContactTextArea
-                    row={6}
+                    row="6"
                     placeholder="Your Message"
-                    name="message"
+                    name="details"
                     defaultValue=""
-                    value={formData.message}
-                    onChange={handleChange}
-
                   />
                   <div>
-                  <button
-                    type="submit"
-                    className="cursor-pointer w-full rounded border border-primary bg-[#020617] p-3 text-white transition hover:bg-opacity-90"
-                  >
-                    Send Message
-                  </button>
-                  {status === "loading" && <p className="mt-4 text-white">Sending...</p>}
-                  {status === "success" && (
-                    <p className="mt-4 text-green-400">Message sent successfully!</p>
-                  )}
-                  {status && status !== "loading" && status !== "success" && (
-                    <p className="mt-4 text-red-400">{status}</p>
-                  )}
-                </div>
-
+                    <button
+                      type="submit"
+                      className="w-full rounded border border-primary bg-[#020617] p-3 text-white transition hover:bg-opacity-90"
+                    >
+                      Send Message
+                    </button>
+                  </div>
                 </form>
                 <div>
                   <span className="absolute -right-9 -top-10 z-[-1]">
@@ -1023,16 +962,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
 export default ContactSection;
 
-interface ContactTextAreaProps {
-  row: number;
-  placeholder: string;
-  name: string;
-  defaultValue?: string;
-  value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-}
-
-const ContactTextArea = ({ row, placeholder, name, defaultValue, value, onChange }: ContactTextAreaProps) => {
+const ContactTextArea = ({ row, placeholder, name, defaultValue }) => {
   return (
     <>
       <div className="mb-6">
@@ -1042,23 +972,13 @@ const ContactTextArea = ({ row, placeholder, name, defaultValue, value, onChange
           name={name}
           className="w-full resize-none rounded border border-stroke px-[14px] py-3 text-base text-body-color outline-none focus:border-primary dark:border-dark-3 dark:bg-dark dark:text-dark-6"
           defaultValue={defaultValue}
-          value={value}
-          onChange={onChange}
         />
       </div>
     </>
   );
 };
 
-interface ContactInputBoxProps {
-  type: string;
-  placeholder: string;
-  name: string;
-  value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
-
-const ContactInputBox = ({ type, placeholder, name, value, onChange }: ContactInputBoxProps) => {
+const ContactInputBox = ({ type, placeholder, name }) => {
   return (
     <>
       <div className="mb-6">
@@ -1067,8 +987,6 @@ const ContactInputBox = ({ type, placeholder, name, value, onChange }: ContactIn
           placeholder={placeholder}
           name={name}
           className="w-full rounded border border-stroke px-[14px] py-3 text-base text-body-color outline-none focus:border-primary dark:border-dark-3 dark:bg-dark dark:text-dark-6"
-          value={value}
-          onChange={onChange}
         />
       </div>
     </>

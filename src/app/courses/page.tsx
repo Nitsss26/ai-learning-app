@@ -1,21 +1,17 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import FooterSection from "@/components/sections/FooterSection";
 import NavSection from "@/components/sections/NavSection";
 import { cn } from "@/lib/utils";
-// import { Stars } from "@react-three/drei";
-// import { Canvas } from "@react-three/fiber";
-import { IconClockHour3, IconUsersGroup, IconBrandYoutubeFilled, IconGrowth, IconStarFilled } from "@tabler/icons-react";
-import axios from "axios";
+import { Stars } from "@react-three/drei";
+import { Canvas } from "@react-three/fiber";
+import { IconClockHour3, IconUsersGroup, IconCertificate, IconBrandYoutubeFilled, IconGrowth, IconStar, IconStarFilled } from "@tabler/icons-react";
 import createGlobe from "cobe";
 import { motion } from "motion/react";
 import Link from "next/link";
-import { useRef, useEffect, useState } from "react";
-import Image from "next/image";
+import { useRef, useEffect } from "react";
 
 
 export default function Courses() {
-
     return (
         <div className="w-full h-full flex bg-[#020b1a]  justify-center flex-col items-center">
             <NavSection />
@@ -26,7 +22,7 @@ export default function Courses() {
                     </h4>
 
                     <p className="text-sm lg:text-base  max-w-2xl  my-4 mx-auto text-neutral-500 text-center font-normal dark:text-neutral-300">
-                        Dive into our comprehensive courses designed to help you master AI and Machine Learning. Whether you&apos;re a beginner or an expert, we have something for everyone.
+                        Dive into our comprehensive courses designed to help you master AI and Machine Learning. Whether you're a beginner or an expert, we have something for everyone.
                     </p>
                 </div>
             </div>
@@ -36,11 +32,11 @@ export default function Courses() {
 
 
             <FooterSection />
-            {/* <div className="absolute inset-0 z-0 w-full h-full">
+            <div className="absolute inset-0 z-0 w-full h-full">
                 <Canvas>
                     <Stars radius={100} count={2500} factor={3} fade speed={1} />
                 </Canvas>
-            </div> */}
+            </div>
 
         </div>
     );
@@ -48,106 +44,67 @@ export default function Courses() {
 
 
 export function CourseList() {
-        const [features, setFeatures] = useState<any[]>([])
-      const [loading, setLoading] = useState(true)
-    
-        useEffect(() => {
-    const fetchCourses = async () => {
-      setLoading(true)
-      try {
-        const response = await axios.get('/api/courses?all=true')
-        const courses = response.data.courses
-
-        const transformed = courses.map((course: any, index: number) => ({
-          title: course.title,
-          description: course.description,
-          skeleton: SkeletonImage(`/course${(index % 4) + 1}.png`), // cycle 1-4
-          className: [
-            "col-span-1 lg:col-span-4 border-b lg:border-r dark:border-neutral-800",
-            "border-b col-span-1 lg:col-span-2 dark:border-neutral-800",
-            "col-span-1 lg:col-span-3 lg:border-r  dark:border-neutral-800",
-            "col-span-1 lg:col-span-3 border-b lg:border-none",
-          ][index % 4], // repeat classes in the same order
-        }))
-
-        setFeatures(transformed)
-      } catch (err) {
-        console.error("Failed to fetch courses:", err)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchCourses()
-  }, [])
-
-  console.log("Features:", features);
-    // const features = [
-    //     {
-    //         title: "Introduction to Machine Learning",
-    //         description:
-    //             "Learn the fundamentals of Machine Learning. Get started with the basics of Machine Learning.",
-    //         skeleton: SkeletonImage('/course1.png'),
-    //         className:
-    //             "col-span-1 lg:col-span-4 border-b lg:border-r dark:border-neutral-800",
-    //     },
-    //     {
-    //         title: "Deep Learning with Neural Networks",
-    //         description:
-    //             "Dive deep into the world of Neural Networks. Understand how to build and train deep learning models.",
-    //         skeleton: SkeletonImage("/course2.png"),
-    //         className: "border-b col-span-1 lg:col-span-2 dark:border-neutral-800",
-    //     },
-    //     {
-    //         title: "Machine Learning for Beginners",
-    //         description:
-    //             "A beginner's guide to Machine Learning. Learn the basics of Machine Learning and how to apply it.",
-    //         skeleton: SkeletonImage('/course3.png'),
-    //         className:
-    //             "col-span-1 lg:col-span-3 lg:border-r  dark:border-neutral-800",
-    //     },
-    //     {
-    //         title: "Scalable Model Deployment",
-    //         description:
-    //             "Learn how to deploy Machine Learning models at scale. Understand the best practices for deploying models in production.",
-    //         skeleton: SkeletonImage('/course4.png'),
-    //         className: "col-span-1 lg:col-span-3 border-b lg:border-none",
-    //     },
-    //     {
-    //         title: "Machine Learning for Professionals",
-    //         description:
-    //             "A professional's guide to Machine Learning. Learn advanced techniques and best practices for Machine Learning.",
-    //         skeleton: SkeletonImage('/course1.png'),
-    //         className:
-    //             "col-span-1 lg:col-span-3 lg:border-r  dark:border-neutral-800",
-    //     },
-    //     {
-    //         title: "Machine Learning for Entrepreneurs",
-    //         description:
-    //             "A entrepreneur's guide to Machine Learning. Learn how to apply Machine Learning to your business.",
-    //         skeleton: SkeletonImage('/course2.png'),
-    //         className: "col-span-1 lg:col-span-3 border-b lg:border-none",
-    //     },
-    //     {
-    //         title: "Machine Learning for Researchers",
-    //         description:
-    //             "A researcher's guide to Machine Learning. Learn how to apply Machine Learning to your research.",
-    //         skeleton: SkeletonImage('/course3.png'),
-    //         className:
-    //             "col-span-1 lg:col-span-3 lg:border-r  dark:border-neutral-800",
-    //     }
-    // ];
-    
+    const features = [
+        {
+            title: "Introduction to Machine Learning",
+            description:
+                "Learn the fundamentals of Machine Learning. Get started with the basics of Machine Learning.",
+            skeleton: SkeletonImage('/course1.png'),
+            className:
+                "col-span-1 lg:col-span-4 border-b lg:border-r dark:border-neutral-800",
+        },
+        {
+            title: "Deep Learning with Neural Networks",
+            description:
+                "Dive deep into the world of Neural Networks. Understand how to build and train deep learning models.",
+            skeleton: SkeletonImage("/course2.png"),
+            className: "border-b col-span-1 lg:col-span-2 dark:border-neutral-800",
+        },
+        {
+            title: "Machine Learning for Beginners",
+            description:
+                "A beginner's guide to Machine Learning. Learn the basics of Machine Learning and how to apply it.",
+            skeleton: SkeletonImage('/course3.png'),
+            className:
+                "col-span-1 lg:col-span-3 lg:border-r  dark:border-neutral-800",
+        },
+        {
+            title: "Scalable Model Deployment",
+            description:
+                "Learn how to deploy Machine Learning models at scale. Understand the best practices for deploying models in production.",
+            skeleton: SkeletonImage('/course4.png'),
+            className: "col-span-1 lg:col-span-3 border-b lg:border-none",
+        },
+        {
+            title: "Machine Learning for Professionals",
+            description:
+                "A professional's guide to Machine Learning. Learn advanced techniques and best practices for Machine Learning.",
+            skeleton: SkeletonImage('/course1.png'),
+            className:
+                "col-span-1 lg:col-span-3 lg:border-r  dark:border-neutral-800",
+        },
+        {
+            title: "Machine Learning for Entrepreneurs",
+            description:
+                "A entrepreneur's guide to Machine Learning. Learn how to apply Machine Learning to your business.",
+            skeleton: SkeletonImage('/course2.png'),
+            className: "col-span-1 lg:col-span-3 border-b lg:border-none",
+        },
+        {
+            title: "Machine Learning for Researchers",
+            description:
+                "A researcher's guide to Machine Learning. Learn how to apply Machine Learning to your research.",
+            skeleton: SkeletonImage('/course3.png'),
+            className:
+                "col-span-1 lg:col-span-3 lg:border-r  dark:border-neutral-800",
+        }
+    ];
     return (
         <section id="courses">
             <div className="relative bg-[#020b1a] flex justify-between items-center flex-col z-20  max-w-7xl mx-auto">
                 <div className="relative ">
                     <div className="grid grid-cols-1 lg:grid-cols-6 mt-0 xl:border rounded-md dark:border-neutral-800">
-                        {loading?
-                        "Loading ... " 
-                        :
-                        
-                        features.map((feature) => (
+                        {features.map((feature) => (
                             <Link key={feature.title} className={feature.className} href={`/courses/${feature.title}`}>
                                 <FeatureCard className={feature.className}>
                                     <FeatureTitle>{feature.title}</FeatureTitle>
@@ -249,14 +206,14 @@ export const SkeletonImage = (url: string) => {
         <div className="relative flex my-8 mx-2 gap-10 h-[400px] md:h-[500px] group rounded-2xl">
             <div className="w-full  p-5  mx-auto bg-white dark:bg-neutral-900 shadow-2xl group h-full">
                 <div className="flex flex-1 w-full h-full flex-col space-y-2  ">
-                    <Image
+                    {/* TODO */}
+                    <img
                         src={url}
                         alt="header"
                         width={600}
                         height={600}
-                        className="h-full w-full aspect-square object-cover rounded-sm content-center"
+                        className="h-full w-full aspect-square object-cover object-left-top rounded-sm object-center content-center"
                     />
-                   
                 </div>
             </div>
 
@@ -277,7 +234,7 @@ export const SkeletonThree = () => {
                 <div className="flex flex-1 w-full h-full flex-col space-y-2  relative">
                     {/* TODO */}
                     <IconBrandYoutubeFilled className="h-20 w-20 absolute z-10 inset-0 text-red-500 m-auto " />
-                    <Image
+                    <img
                         src="https://assets.aceternity.com/fireship.jpg"
                         alt="header"
                         width={800}
@@ -330,11 +287,11 @@ export const SkeletonTwo = () => {
                         whileTap="whileTap"
                         className="rounded-xl -mr-4 mt-4 p-1 bg-white dark:bg-neutral-800 dark:border-neutral-700 border border-neutral-100 shrink-0 overflow-hidden"
                     >
-                        <Image
+                        <img
                             src={image}
                             alt="bali images"
-                            width={500}
-                            height={500}
+                            width="500"
+                            height="500"
                             className="rounded-lg h-20 w-20 md:h-40 md:w-40 object-cover shrink-0"
                         />
                     </motion.div>
@@ -352,11 +309,11 @@ export const SkeletonTwo = () => {
                         whileTap="whileTap"
                         className="rounded-xl -mr-4 mt-4 p-1 bg-white dark:bg-neutral-800 dark:border-neutral-700 border border-neutral-100 shrink-0 overflow-hidden"
                     >
-                        <Image
+                        <img
                             src={image}
                             alt="bali images"
-                            width={500}
-                            height={500}
+                            width="500"
+                            height="500"
                             className="rounded-lg h-20 w-20 md:h-40 md:w-40 object-cover shrink-0"
                         />
                     </motion.div>
