@@ -20,6 +20,7 @@ const data = [
         title: "Experience Copilot AI for Free",
         src: "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?q=80&w=3556&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         publishDate: 'September 15, 2022',
+         
     },
     {
         id: 2,
@@ -27,6 +28,7 @@ const data = [
         title: "Enhance your productivity.",
         src: "https://images.unsplash.com/photo-1531554694128-c4c6665f59c2?q=80&w=3387&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         publishDate: 'September 15, 2022',
+        
     },
     {
         id: 3,
@@ -34,6 +36,7 @@ const data = [
         title: "Launching the new Apple Vision Pro.",
         src: "https://images.unsplash.com/photo-1713869791518-a770879e60dc?q=80&w=2333&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         publishDate: 'September 15, 2022',
+        
     },
 
     {
@@ -219,7 +222,7 @@ export const Card = ({
             >
                 <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-full bg-gradient-to-b from-black/50 via-transparent to-transparent" />
                 <div className="relative z-40 p-8">
-                    <motion.p
+                    <motion.div
                         layoutId={layout ? `category-${card.category}` : undefined}
                         className="text-left font-sans text-sm mb-2 font-medium text-white md:text-base"
                     >
@@ -227,7 +230,7 @@ export const Card = ({
                             <IconCalendar className="text-black dark:text-white" />
                             {card.publishDate}
                         </div>
-                    </motion.p>
+                    </motion.div>
                     <motion.p
                         layoutId={layout ? `title-${card.title}` : undefined}
                         className="mt-2 max-w-xs text-left font-sans text-xl font-semibold [text-wrap:balance] text-white md:text-3xl"
