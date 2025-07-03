@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import {
   BarChart,
   Bar,
@@ -186,8 +187,15 @@ export default function Transactions() {
                     className={`transition hover:bg-green-600/20 ${i % 2 === 0 ? 'bg-green-500/10' : 'bg-green-400/10'
                       }`}
                   >
-                    <td className="p-3 flex items-center gap-3">
-                      <img src={tx.image} alt={tx.course} className="w-8 h-8 rounded shadow" />
+                    <td className="p-3 flex items-center gap-2">
+                      <Image
+                        src={tx.image}
+                        alt={tx.course}
+                        width={32}
+                        height={32}
+                        className="w-8 h-8 rounded shadow"
+                        unoptimized
+                      />
                       <span className="font-medium text-white">{tx.course}</span>
                     </td>
                     <td className="p-3 text-white">{tx.date}</td>
