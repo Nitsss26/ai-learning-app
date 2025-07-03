@@ -10,6 +10,9 @@ module.exports = {
   darkMode: "class",
   theme: {
     extend: {
+       backdropBlur: {
+      xs: '2px',
+      },
       colors: {
         primary: {
           DEFAULT: "#02091a", // your primary color (e.g., blue-800)
