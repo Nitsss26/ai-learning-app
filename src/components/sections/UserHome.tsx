@@ -1,7 +1,7 @@
 // import { StatCard } from "@/components/user/StatCard";
 // import { CourseDashboard } from "@/components/user/CourseDashboard";
 
-import { CourseDashboard } from "./CourseDashboard";
+import  CourseDashboard  from "./CourseDashboard";
 import { StatCard } from "./StatCard";
 
 export default function UserHome() {
@@ -49,7 +49,7 @@ export default function UserHome() {
 
       <div>
         <h3 className="text-xl font-semibold mb-4">Your Courses</h3>
-        <CourseDashboard courses={courses} />
+        <CourseDashboard />
       </div>
     </div>
   );

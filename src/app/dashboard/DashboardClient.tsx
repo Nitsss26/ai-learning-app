@@ -27,7 +27,7 @@ import UserProfile from "@/components/sections/UserProfile";
 import SupportDashboard from "@/components/sections/SupportDashboard";
 import FeedbackDashboard from "@/components/sections/FeedbackDashboard";
 import SettingsDashboard from "@/components/sections/SettingsDashboard";
-import { CourseDashboard } from "@/components/sections/CourseDashboard";
+import CourseDashboard from "@/components/sections/CourseDashboard";
 import Transactions from "@/components/sections/Transactions";
 
 export default function DashboardClient() {
@@ -70,7 +70,7 @@ export default function DashboardClient() {
   const pages = {
     dashboard: <UserHome />,
     profile: <UserProfile />,
-    courses: <CourseDashboard courses={sampleCourses} />,
+    courses: <CourseDashboard/>,
     support: <SupportDashboard />,
     feedback: <FeedbackDashboard />,
     transactions: <Transactions />,
@@ -163,29 +163,29 @@ export default function DashboardClient() {
   );
 }
 
-const sampleCourses = [
-  {
-    id: 1,
-    title: "React Fundamentals",
-    description: "Learn the basics of building UI with React.js, components, hooks, and JSX.",
-    progress: 75,
-    image: "https://cdn.worldvectorlogo.com/logos/react-2.svg",
-    slug: "react-fundamentals",
-  },
-  {
-    id: 2,
-    title: "Node.js Mastery",
-    description: "Master backend development with Node.js, Express, and REST APIs.",
-    progress: 40,
-    image: "https://cdn.worldvectorlogo.com/logos/nodejs-icon.svg",
-    slug: "nodejs-mastery",
-  },
-  {
-    id: 3,
-    title: "UI/UX Design Basics",
-    description: "Understand principles of user-centered design, wireframing, and prototyping.",
-    progress: 90,
-    image: "https://cdn-icons-png.flaticon.com/512/906/906343.png",
-    slug: "ui-ux-design-basics",
-  },
-];
+// const sampleCourses = [
+//   {
+//     id: 1,
+//     title: "React Fundamentals",
+//     description: "Learn the basics of building UI with React.js, components, hooks, and JSX.",
+//     progress: 75,
+//     image: "https://cdn.worldvectorlogo.com/logos/react-2.svg",
+//     slug: "react-fundamentals",
+//   },
+//   {
+//     id: 2,
+//     title: "Node.js Mastery",
+//     description: "Master backend development with Node.js, Express, and REST APIs.",
+//     progress: 40,
+//     image: "https://cdn.worldvectorlogo.com/logos/nodejs-icon.svg",
+//     slug: "nodejs-mastery",
+//   },
+//   {
+//     id: 3,
+//     title: "UI/UX Design Basics",
+//     description: "Understand principles of user-centered design, wireframing, and prototyping.",
+//     progress: 90,
+//     image: "https://cdn-icons-png.flaticon.com/512/906/906343.png",
+//     slug: "ui-ux-design-basics",
+//   },
+// ];
