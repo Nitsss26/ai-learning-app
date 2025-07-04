@@ -205,10 +205,7 @@ const DemoDashboard = () => {
          </div>
     );
 };
-<<<<<<< HEAD
  
 
 
-=======
->>>>>>> 6cda0eef47b3fc398540140befb737d2f1c0d5d8
 
