@@ -34,13 +34,9 @@
     "@radix-ui/react-tooltip": "^1.2.7",
     "@react-three/drei": "^10.1.2",
     "@react-three/fiber": "^9.0.0-alpha.8",
-<<<<<<< HEAD
-    "@supabase/supabase-js": "^2.50.3",
-=======
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/ssr": "^0.6.1",
-    "@supabase/supabase-js": "^2.50.0",
->>>>>>> 6cda0eef47b3fc398540140befb737d2f1c0d5d8
+    "@supabase/supabase-js": "^2.50.3",
     "@tabler/icons-react": "^3.34.0",
     "@tailwindcss/vite": "^4.1.10",
     "@tanstack/react-table": "^8.21.3",
