@@ -13,11 +13,11 @@ import {
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "motion/react";
-import Image, { ImageProps } from "next/image";
+import { ImageProps } from "next/image";
 import { useOutsideClick } from "@/hooks/use-outside-click";
 
 interface CarouselProps {
-  items: React.ReactElement[];
+  items: JSX.Element[];
   initialScroll?: number;
 }
 
@@ -121,6 +121,7 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
                     duration: 0.5,
                     delay: 0.2 * index,
                     ease: "easeOut",
+                    once: true,
                   },
                 }}
                 key={"card" + index}
@@ -156,7 +157,7 @@ export const Card = ({
   card,
   index,
   layout = false,
-  // onClick = {},
+  onClick = {},
 }: {
   card: Card;
   index: number;
@@ -164,13 +165,8 @@ export const Card = ({
   onClick?: () => void;
 }) => {
   const [open, setOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null!);
-  const { onCardClose } = useContext(CarouselContext);
-
-  const handleClose = React.useCallback(() => {
-    setOpen(false);
-    onCardClose(index);
-  }, [onCardClose, index]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { onCardClose, currentIndex } = useContext(CarouselContext);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -187,12 +183,17 @@ export const Card = ({
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open, handleClose]);
+  }, [open]);
 
   useOutsideClick(containerRef, () => handleClose());
 
   const handleOpen = () => {
     setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    onCardClose(index);
   };
 
   return (
@@ -276,16 +277,22 @@ export const BlurImage = ({
   alt,
   ...rest
 }: ImageProps) => {
+  const [isLoading, setLoading] = useState(true);
   return (
-    <Image
-      className={cn("h-full w-full transition duration-300", className)}
-      src={src}
+    <img
+      className={cn(
+        "h-full w-full transition duration-300",
+        className,
+      )}
+      onLoad={() => setLoading(false)}
+      src={src as string}
       width={width}
       height={height}
-      alt={alt ? alt : "Background of a beautiful view"}
       loading="lazy"
+      decoding="async"
+      blurDataURL={typeof src === "string" ? src : undefined}
+      alt={alt ? alt : "Background of a beautiful view"}
       {...rest}
     />
   );
 };
-

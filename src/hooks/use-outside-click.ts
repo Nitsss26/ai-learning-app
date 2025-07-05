@@ -2,11 +2,11 @@ import React, { useEffect } from "react";
 
 export const useOutsideClick = (
   ref: React.RefObject<HTMLDivElement>,
-  callback: (event: Event) => void
+  callback: Function
 ) => {
   useEffect(() => {
-    const listener = (event: Event) => {
-      if (!ref.current || ref.current.contains(event.target as Node)) {
+    const listener = (event: any) => {
+      if (!ref.current || ref.current.contains(event.target)) {
         return;
       }
       callback(event);

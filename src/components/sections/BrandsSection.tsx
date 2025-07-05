@@ -1,15 +1,6 @@
 import React from "react";
-import Image from "next/image";
-import Link from "next/link";
 
-type Brand = {
-  imageSrc: string;
-  lightImageSrc: string;
-  altText: string;
-  link: string;
-};
-
-const brandsData: Brand[] = [
+const brandsData = [
   {
     imageSrc:
       "https://cdn.tailgrids.com/assets/images/marketing/brands/graygrids.svg",
@@ -63,32 +54,21 @@ export default function BrandsSection() {
   );
 }
 
-type SingleImageProps = {
-  brand: Brand;
-};
-
-const SingleImage: React.FC<SingleImageProps> = ({ brand }) => {
+const SingleImage = ({ brand }) => {
   const { link, imageSrc, lightImageSrc, altText } = brand;
   return (
     <>
-      <Link
+      <a
         href={link}
-        className="mx-4 flex w-[150px] items-center justify-center py-5 2xl:w-[180px]">
-        <Image
-          src={imageSrc}
-          alt={altText}
-          width={150}
-          height={40}
-          className="h-10 w-full dark:hidden"
-        />
-        <Image
+        className="mx-4 flex w-[150px] items-center justify-center py-5 2xl:w-[180px]"
+      >
+        <img src={imageSrc} alt={altText} className="h-10 w-full dark:hidden" />
+        <img
           src={lightImageSrc}
           alt={altText}
-          width={150}
-          height={40}
           className="hidden h-10 w-full dark:block"
         />
-      </Link>
+      </a>
     </>
   );
 };
