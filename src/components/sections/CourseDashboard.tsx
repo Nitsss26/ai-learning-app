@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, AreaChart, Area, PieChart, Pie, Cell } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, AreaChart, Area, PieChart, Pie, Cell } from 'recharts';
+import Image from 'next/image';
 
 // Analytics Data
 const weeklyProgressData = [
@@ -176,43 +177,14 @@ const initialCourses = [
   }
 ];
 
-export default function LearningPage() {
-  const [courses, setCourses] = useState(initialCourses);
-  const [myCourses, setMyCourses] = useState([]);
-  const [isAddCourseOpen, setIsAddCourseOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const [timeframe, setTimeframe] = useState('weekly');
-  const [courseForm, setCourseForm] = useState({
-    title: '',
-    description: '',
-    author: '',
-    readTime: '',
-    category: '',
-    image: '',
-    tags: '',
-    difficulty: '',
-    duration: ''
-  });
-
-  const handleInputChange = (field, value) => {
-    setCourseForm(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleSubmit = () => {
-    const newCourse = {
-      id: Date.now(),
-      ...courseForm,
-      date: new Date().toISOString().split('T')[0],
-      tags: courseForm.tags.split(',').map(tag => tag.trim()),
-      views: 0,
-      likes: 0,
-      comments: 0,
-      progress: 0
-    };
-    
-    setCourses(prev => [newCourse, ...prev]);
-    setIsAddCourseOpen(false);
-    setCourseForm({
+  export default function LearningPage() {
+    type Course = typeof initialCourses[number];
+    const [courses, setCourses] = useState<Course[]>(initialCourses);
+    const [myCourses, setMyCourses] = useState<Course[]>([]);
+    const [isAddCourseOpen, setIsAddCourseOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState('dashboard');
+    const [timeframe, setTimeframe] = useState('weekly');
+    const [courseForm, setCourseForm] = useState({
       title: '',
       description: '',
       author: '',
@@ -223,152 +195,270 @@ export default function LearningPage() {
       difficulty: '',
       duration: ''
     });
-  };
 
-  const deleteCourse = (courseId) => {
-    setCourses(prev => prev.filter(course => course.id !== courseId));
-    setMyCourses(prev => prev.filter(course => course.id !== courseId));
-  };
-
-  const addToMyLearning = (course) => {
-    if (!myCourses.find(c => c.id === course.id)) {
-      setMyCourses(prev => [...prev, { ...course, enrolledDate: new Date().toISOString().split('T')[0] }]);
-    }
-  };
-
-  const removeFromMyLearning = (courseId) => {
-    setMyCourses(prev => prev.filter(course => course.id !== courseId));
-  };
-
-  const updateProgress = (courseId, progress) => {
-    setMyCourses(prev => prev.map(course => 
-      course.id === courseId ? { ...course, progress } : course
-    ));
-  };
-
-  const getCategoryColor = (category) => {
-    const colors = {
-      'AI/ML': 'bg-blue-500',
-      'Programming': 'bg-purple-500',
-      'Web Dev': 'bg-green-500',
-      'Backend': 'bg-orange-500',
-      'Data Science': 'bg-red-500'
+    const handleInputChange = (field: keyof typeof courseForm, value: string) => {
+      setCourseForm(prev => ({ ...prev, [field]: value }));
     };
-    return colors[category] || 'bg-gray-500';
-  };
 
-  const getDifficultyColor = (difficulty) => {
-    const colors = {
+    const handleSubmit = () => {
+      const newCourse = {
+        id: Date.now(),
+        ...courseForm,
+        date: new Date().toISOString().split('T')[0],
+        tags: courseForm.tags.split(',').map(tag => tag.trim()),
+        views: 0,
+        likes: 0,
+        comments: 0,
+        progress: 0
+      };
+      
+      setCourses(prev => [newCourse, ...prev]);
+      setIsAddCourseOpen(false);
+      setCourseForm({
+        title: '',
+        description: '',
+        author: '',
+        readTime: '',
+        category: '',
+        image: '',
+        tags: '',
+        difficulty: '',
+        duration: ''
+      });
+    };
+
+    const deleteCourse = (courseId: number) => {
+      setCourses(prev => prev.filter(course => course.id !== courseId));
+      setMyCourses(prev => prev.filter(course => course.id !== courseId));
+    };
+
+    const addToMyLearning = (course: Course) => {
+      if (!myCourses.find(c => c.id === course.id)) {
+        setMyCourses(prev => [...prev, { ...course, enrolledDate: new Date().toISOString().split('T')[0] }]);
+      }
+    };
+
+    const removeFromMyLearning = (courseId: number) => {
+      setMyCourses(prev => prev.filter(course => course.id !== courseId));
+    };
+
+    interface UpdateProgressFn {
+      (courseId: number, progress: number): void;
+    }
+
+    const updateProgress: UpdateProgressFn = (courseId, progress) => {
+      setMyCourses(prev =>
+      prev.map(course =>
+        course.id === courseId ? { ...course, progress } : course
+      )
+      );
+    };
+
+    const getCategoryColor = (category: string) => {
+      const colors: Record<string, string> = {
+        'AI/ML': 'bg-blue-500',
+        'Programming': 'bg-purple-500',
+        'Web Dev': 'bg-green-500',
+        'Backend': 'bg-orange-500',
+        'Data Science': 'bg-red-500'
+      };
+      return colors[category] || 'bg-gray-500';
+    };
+
+    interface DifficultyColors {
+      [key: string]: string;
+      Beginner: string;
+      Intermediate: string;
+      Advanced: string;
+    }
+
+    const getDifficultyColor = (difficulty: string): string => {
+      const colors: DifficultyColors = {
       'Beginner': 'bg-green-900/50 text-green-300 border-green-700',
       'Intermediate': 'bg-yellow-900/50 text-yellow-300 border-yellow-700',
       'Advanced': 'bg-red-900/50 text-red-300 border-red-700'
+      };
+      return colors[difficulty] || 'bg-gray-900/50 text-gray-300 border-gray-700';
     };
-    return colors[difficulty] || 'bg-gray-900/50 text-gray-300 border-gray-700';
-  };
 
-  const getAnalyticsData = () => {
-    switch (timeframe) {
-      case 'monthly': return monthlyData;
-      default: return weeklyProgressData;
-    }
-  };
+    const getAnalyticsData = () => {
+      switch (timeframe) {
+        case 'monthly': return monthlyData;
+        default: return weeklyProgressData;
+      }
+    };
 
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'dashboard':
-        return (
-          <div className="space-y-8">
-            {/* Analytics Dashboard */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Card className="bg-gradient-to-br from-blue-900/50 to-blue-800/30 border-blue-800/50 backdrop-blur-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-blue-300 text-sm font-medium">Total Courses</p>
-                      <p className="text-3xl font-bold text-white">{courses.length}</p>
+    const renderTabContent = () => {
+      switch (activeTab) {
+        case 'dashboard':
+          return (
+            <div className="space-y-8">
+              {/* Analytics Dashboard */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <Card className="bg-gradient-to-br from-blue-900/50 to-blue-800/30 border-blue-800/50 backdrop-blur-sm">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-blue-300 text-sm font-medium">Total Courses</p>
+                        <p className="text-3xl font-bold text-white">{courses.length}</p>
+                      </div>
+                      <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                        <span className="text-blue-400 text-xl font-bold">📚</span>
+                      </div>
                     </div>
-                    <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                      <span className="text-blue-400 text-xl font-bold">📚</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
 
-              <Card className="bg-gradient-to-br from-green-900/50 to-green-800/30 border-green-800/50 backdrop-blur-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-green-300 text-sm font-medium">My Courses</p>
-                      <p className="text-3xl font-bold text-white">{myCourses.length}</p>
+                <Card className="bg-gradient-to-br from-green-900/50 to-green-800/30 border-green-800/50 backdrop-blur-sm">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-green-300 text-sm font-medium">My Courses</p>
+                        <p className="text-3xl font-bold text-white">{myCourses.length}</p>
+                      </div>
+                      <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+                        <span className="text-green-400 text-xl font-bold">🎓</span>
+                      </div>
                     </div>
-                    <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-                      <span className="text-green-400 text-xl font-bold">🎓</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
 
-              <Card className="bg-gradient-to-br from-purple-900/50 to-purple-800/30 border-purple-800/50 backdrop-blur-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-purple-300 text-sm font-medium">Completed</p>
-                      <p className="text-3xl font-bold text-white">{myCourses.filter(c => c.progress === 100).length}</p>
+                <Card className="bg-gradient-to-br from-purple-900/50 to-purple-800/30 border-purple-800/50 backdrop-blur-sm">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-purple-300 text-sm font-medium">Completed</p>
+                        <p className="text-3xl font-bold text-white">{myCourses.filter(c => c.progress === 100).length}</p>
+                      </div>
+                      <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                        <span className="text-purple-400 text-xl font-bold">✅</span>
+                      </div>
                     </div>
-                    <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                      <span className="text-purple-400 text-xl font-bold">✅</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
 
-              <Card className="bg-gradient-to-br from-orange-900/50 to-orange-800/30 border-orange-800/50 backdrop-blur-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-orange-300 text-sm font-medium">Avg. Progress</p>
-                      <p className="text-3xl font-bold text-white">
-                        {myCourses.length > 0 ? Math.round(myCourses.reduce((acc, c) => acc + c.progress, 0) / myCourses.length) : 0}%
-                      </p>
+                <Card className="bg-gradient-to-br from-orange-900/50 to-orange-800/30 border-orange-800/50 backdrop-blur-sm">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-orange-300 text-sm font-medium">Avg. Progress</p>
+                        <p className="text-3xl font-bold text-white">
+                          {myCourses.length > 0 ? Math.round(myCourses.reduce((acc, c) => acc + c.progress, 0) / myCourses.length) : 0}%
+                        </p>
+                      </div>
+                      <div className="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center">
+                        <span className="text-orange-400 text-xl font-bold">📊</span>
+                      </div>
                     </div>
-                    <div className="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center">
-                      <span className="text-orange-400 text-xl font-bold">📊</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                  </CardContent>
+                </Card>
+              </div>
 
-            {/* Charts Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Charts Section */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card className="bg-gray-900/50 border-gray-800 backdrop-blur-sm">
+                  <CardHeader>
+                    <div className="flex justify-between items-center">
+                      <CardTitle className="text-xl font-semibold text-white">Learning Progress</CardTitle>
+                      <Select value={timeframe} onValueChange={setTimeframe}>
+                        <SelectTrigger className="w-32 bg-gray-800 border-gray-700">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-gray-800 border-gray-700">
+                          <SelectItem value="weekly">Weekly</SelectItem>
+                          <SelectItem value="monthly">Monthly</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <AreaChart data={getAnalyticsData()}>
+                        <defs>
+                          <linearGradient id="colorCompleted" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
+                            <stop offset="95%" stopColor="#10b981" stopOpacity={0.1}/>
+                          </linearGradient>
+                          <linearGradient id="colorStarted" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
+                            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                        <XAxis dataKey="name" stroke="#9ca3af" />
+                        <YAxis stroke="#9ca3af" />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: '#1f2937', 
+                            border: '1px solid #374151',
+                            borderRadius: '8px',
+                            color: '#fff'
+                          }} 
+                        />
+                        <Area 
+                          type="monotone" 
+                          dataKey="completed" 
+                          stackId="1"
+                          stroke="#10b981" 
+                          fillOpacity={1} 
+                          fill="url(#colorCompleted)"
+                        />
+                        <Area 
+                          type="monotone" 
+                          dataKey="started" 
+                          stackId="1"
+                          stroke="#3b82f6" 
+                          fillOpacity={1} 
+                          fill="url(#colorStarted)"
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-gray-900/50 border-gray-800 backdrop-blur-sm">
+                  <CardHeader>
+                    <CardTitle className="text-xl font-semibold text-white">Course Categories</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <PieChart>
+                        <Pie
+                          data={categoryData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {categoryData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: '#1f2937', 
+                            border: '1px solid #374151',
+                            borderRadius: '8px',
+                            color: '#fff'
+                          }} 
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Study Hours Chart */}
               <Card className="bg-gray-900/50 border-gray-800 backdrop-blur-sm">
                 <CardHeader>
-                  <div className="flex justify-between items-center">
-                    <CardTitle className="text-xl font-semibold text-white">Learning Progress</CardTitle>
-                    <Select value={timeframe} onValueChange={setTimeframe}>
-                      <SelectTrigger className="w-32 bg-gray-800 border-gray-700">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="bg-gray-800 border-gray-700">
-                        <SelectItem value="weekly">Weekly</SelectItem>
-                        <SelectItem value="monthly">Monthly</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <CardTitle className="text-xl font-semibold text-white">Study Hours This Week</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
-                    <AreaChart data={getAnalyticsData()}>
-                      <defs>
-                        <linearGradient id="colorCompleted" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
-                          <stop offset="95%" stopColor="#10b981" stopOpacity={0.1}/>
-                        </linearGradient>
-                        <linearGradient id="colorStarted" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
-                          <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
-                        </linearGradient>
-                      </defs>
+                    <BarChart data={weeklyProgressData}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                       <XAxis dataKey="name" stroke="#9ca3af" />
                       <YAxis stroke="#9ca3af" />
@@ -380,169 +470,188 @@ export default function LearningPage() {
                           color: '#fff'
                         }} 
                       />
-                      <Area 
-                        type="monotone" 
-                        dataKey="completed" 
-                        stackId="1"
-                        stroke="#10b981" 
-                        fillOpacity={1} 
-                        fill="url(#colorCompleted)"
-                      />
-                      <Area 
-                        type="monotone" 
-                        dataKey="started" 
-                        stackId="1"
-                        stroke="#3b82f6" 
-                        fillOpacity={1} 
-                        fill="url(#colorStarted)"
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gray-900/50 border-gray-800 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="text-xl font-semibold text-white">Course Categories</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie
-                        data={categoryData}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {categoryData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip 
-                        contentStyle={{ 
-                          backgroundColor: '#1f2937', 
-                          border: '1px solid #374151',
-                          borderRadius: '8px',
-                          color: '#fff'
-                        }} 
-                      />
-                    </PieChart>
+                      <Bar dataKey="hours" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+                    </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
             </div>
+          );
 
-            {/* Study Hours Chart */}
-            <Card className="bg-gray-900/50 border-gray-800 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold text-white">Study Hours This Week</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={weeklyProgressData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                    <XAxis dataKey="name" stroke="#9ca3af" />
-                    <YAxis stroke="#9ca3af" />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: '#1f2937', 
-                        border: '1px solid #374151',
-                        borderRadius: '8px',
-                        color: '#fff'
-                      }} 
-                    />
-                    <Bar dataKey="hours" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </div>
-        );
+        case 'my-learning':
+          return (
+            <div className="space-y-6">
+              {/* My Learning Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <Card className="bg-gradient-to-br from-blue-900/50 to-blue-800/30 border-blue-800/50 backdrop-blur-sm">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-blue-300 text-sm font-medium">Enrolled</p>
+                        <p className="text-3xl font-bold text-white">{myCourses.length}</p>
+                      </div>
+                      <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                        <span className="text-blue-400 text-xl font-bold">📚</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
 
-      case 'my-learning':
-        return (
-          <div className="space-y-6">
-            {/* My Learning Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <Card className="bg-gradient-to-br from-blue-900/50 to-blue-800/30 border-blue-800/50 backdrop-blur-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-blue-300 text-sm font-medium">Enrolled</p>
-                      <p className="text-3xl font-bold text-white">{myCourses.length}</p>
+                <Card className="bg-gradient-to-br from-green-900/50 to-green-800/30 border-green-800/50 backdrop-blur-sm">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-green-300 text-sm font-medium">Completed</p>
+                        <p className="text-3xl font-bold text-white">{myCourses.filter(c => c.progress === 100).length}</p>
+                      </div>
+                      <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+                        <span className="text-green-400 text-xl font-bold">✅</span>
+                      </div>
                     </div>
-                    <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                      <span className="text-blue-400 text-xl font-bold">📚</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
 
-              <Card className="bg-gradient-to-br from-green-900/50 to-green-800/30 border-green-800/50 backdrop-blur-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-green-300 text-sm font-medium">Completed</p>
-                      <p className="text-3xl font-bold text-white">{myCourses.filter(c => c.progress === 100).length}</p>
+                <Card className="bg-gradient-to-br from-orange-900/50 to-orange-800/30 border-orange-800/50 backdrop-blur-sm">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-orange-300 text-sm font-medium">In Progress</p>
+                        <p className="text-3xl font-bold text-white">{myCourses.filter(c => c.progress > 0 && c.progress < 100).length}</p>
+                      </div>
+                      <div className="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center">
+                        <span className="text-orange-400 text-xl font-bold">⏳</span>
+                      </div>
                     </div>
-                    <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-                      <span className="text-green-400 text-xl font-bold">✅</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
 
-              <Card className="bg-gradient-to-br from-orange-900/50 to-orange-800/30 border-orange-800/50 backdrop-blur-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-orange-300 text-sm font-medium">In Progress</p>
-                      <p className="text-3xl font-bold text-white">{myCourses.filter(c => c.progress > 0 && c.progress < 100).length}</p>
+                <Card className="bg-gradient-to-br from-purple-900/50 to-purple-800/30 border-purple-800/50 backdrop-blur-sm">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-purple-300 text-sm font-medium">Avg. Progress</p>
+                        <p className="text-3xl font-bold text-white">
+                          {myCourses.length > 0 ? Math.round(myCourses.reduce((acc, c) => acc + c.progress, 0) / myCourses.length) : 0}%
+                        </p>
+                      </div>
+                      <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                        <span className="text-purple-400 text-xl font-bold">📊</span>
+                      </div>
                     </div>
-                    <div className="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center">
-                      <span className="text-orange-400 text-xl font-bold">⏳</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </div>
 
-              <Card className="bg-gradient-to-br from-purple-900/50 to-purple-800/30 border-purple-800/50 backdrop-blur-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-purple-300 text-sm font-medium">Avg. Progress</p>
-                      <p className="text-3xl font-bold text-white">
-                        {myCourses.length > 0 ? Math.round(myCourses.reduce((acc, c) => acc + c.progress, 0) / myCourses.length) : 0}%
-                      </p>
+              {/* My Learning Courses */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {myCourses.map((course) => (
+                  <Card key={course.id} className="bg-gray-900/50 border-gray-800 backdrop-blur-sm hover:border-gray-600/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10 group overflow-hidden">
+                    <div className="relative">
+                      <Image
+                        src={course.image}
+                        alt={course.title}
+                        width={400}
+                        height={192}
+                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                        style={{ width: '100%', height: '12rem' }}
+                        unoptimized
+                      />
+                      <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-sm rounded-full px-3 py-1">
+                        <span className="text-white text-sm font-medium">{course.readTime}</span>
+                      </div>
+                      <div className="absolute top-4 left-4">
+                        <Badge className={`${getCategoryColor(course.category)} text-white border-0`}>
+                          {course.category}
+                        </Badge>
+                      </div>
                     </div>
-                    <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                      <span className="text-purple-400 text-xl font-bold">📊</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                    
+                    <CardContent className="p-6">
+                      <div className="space-y-4">
+                        <div>
+                          <p className="text-gray-400 text-sm">{course.date} • by {course.author}</p>
+                          <h3 className="text-lg font-semibold text-white mt-2 line-clamp-2 group-hover:text-blue-400 transition-colors duration-200">
+                            {course.title}
+                          </h3>
+                          <p className="text-gray-400 text-sm mt-2 line-clamp-3">{course.description}</p>
+                        </div>
+
+                        {/* Progress Section */}
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-400">Progress</span>
+                            <span className="text-sm text-blue-400">{course.progress}%</span>
+                          </div>
+                          <div className="w-full bg-gray-700 rounded-full h-2">
+                            <div 
+                              className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
+                              style={{ width: `${course.progress}%` }}
+                            ></div>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button 
+                              onClick={() => updateProgress(course.id, Math.min(100, course.progress + 25))}
+                              className="flex-1 bg-blue-600 hover:bg-blue-700 text-xs py-1"
+                            >
+                              Continue
+                            </Button>
+                            <Button 
+                              onClick={() => removeFromMyLearning(course.id)}
+                              className="bg-red-600 hover:bg-red-700 text-xs py-1 px-3"
+                            >
+                              Remove
+                            </Button>
+                          </div>
+                        </div>
+
+                        {/* Tags */}
+                        <div className="flex flex-wrap gap-2">
+                          {course.tags.map((tag, index) => (
+                            <span key={index} className="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded-full">
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {myCourses.length === 0 && (
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-4">📚</div>
+                  <h3 className="text-xl font-semibold text-gray-400 mb-2">No courses enrolled yet</h3>
+                  <p className="text-gray-500">Start learning by enrolling in courses from the catalog</p>
+                </div>
+              )}
             </div>
+          );
 
-            {/* My Learning Courses */}
+        case 'all-courses':
+          return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {myCourses.map((course) => (
+              {courses.map((course) => (
                 <Card key={course.id} className="bg-gray-900/50 border-gray-800 backdrop-blur-sm hover:border-gray-600/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10 group overflow-hidden">
                   <div className="relative">
-                    <img 
-                      src={course.image} 
+                    <Image
+                      src={course.image}
                       alt={course.title}
+                      width={400}
+                      height={192}
                       className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                      style={{ width: '100%', height: '12rem' }}
+                      unoptimized
                     />
                     <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-sm rounded-full px-3 py-1">
                       <span className="text-white text-sm font-medium">{course.readTime}</span>
                     </div>
-                    <div className="absolute top-4 left-4">
+                    <div className="absolute top-4 left-4 flex gap-2">
                       <Badge className={`${getCategoryColor(course.category)} text-white border-0`}>
                         {course.category}
+                      </Badge>
+                      <Badge className={getDifficultyColor(course.difficulty)}>
+                        {course.difficulty}
                       </Badge>
                     </div>
                   </div>
@@ -557,32 +666,16 @@ export default function LearningPage() {
                         <p className="text-gray-400 text-sm mt-2 line-clamp-3">{course.description}</p>
                       </div>
 
-                      {/* Progress Section */}
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-400">Progress</span>
-                          <span className="text-sm text-blue-400">{course.progress}%</span>
-                        </div>
-                        <div className="w-full bg-gray-700 rounded-full h-2">
-                          <div 
-                            className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${course.progress}%` }}
-                          ></div>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button 
-                            onClick={() => updateProgress(course.id, Math.min(100, course.progress + 25))}
-                            className="flex-1 bg-blue-600 hover:bg-blue-700 text-xs py-1"
-                          >
-                            Continue
-                          </Button>
-                          <Button 
-                            onClick={() => removeFromMyLearning(course.id)}
-                            className="bg-red-600 hover:bg-red-700 text-xs py-1 px-3"
-                          >
-                            Remove
-                          </Button>
-                        </div>
+                      {/* Course Info */}
+                      <div className="flex items-center gap-4 text-sm text-gray-300">
+                        <span className="flex items-center gap-1">
+                          <span className="text-blue-400">⏱️</span>
+                          {course.duration}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <span className="text-green-400">👁️</span>
+                          {course.views}
+                        </span>
                       </div>
 
                       {/* Tags */}
@@ -593,312 +686,243 @@ export default function LearningPage() {
                           </span>
                         ))}
                       </div>
+
+                      {/* Actions */}
+                      <div className="flex gap-2 pt-2 border-t border-gray-800">
+                        <Button 
+                          onClick={() => addToMyLearning(course)}
+                          className="flex-1 bg-green-600 hover:bg-green-700 text-xs py-1"
+                          disabled={!!myCourses.find(c => c.id === course.id)}
+                        >
+                          {myCourses.find(c => c.id === course.id) ? 'Enrolled' : 'Enroll'}
+                        </Button>
+                        <Button 
+                          onClick={() => deleteCourse(course.id)}
+                          className="bg-red-600 hover:bg-red-700 text-xs py-1 px-3"
+                        >
+                          Delete
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
+          );
 
-            {myCourses.length === 0 && (
-              <div className="text-center py-12">
-                <div className="text-6xl mb-4">📚</div>
-                <h3 className="text-xl font-semibold text-gray-400 mb-2">No courses enrolled yet</h3>
-                <p className="text-gray-500">Start learning by enrolling in courses from the catalog</p>
-              </div>
-            )}
+        default:
+          return null;
+      }
+    };
+
+    return (
+      <div className="min-h-screen bg-gray-950 text-white page-scrollbar overflow-y-auto">
+        <div className="container mx-auto p-6 space-y-8">
+          {/* Header */}
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                Learning Dashboard
+              </h1>
+              <p className="text-gray-400 mt-2">
+                Track your progress, manage courses, and analyze your learning journey
+              </p>
+            </div>
+            
+            <Button 
+              onClick={() => setIsAddCourseOpen(true)}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+            >
+              + Add New Course
+            </Button>
           </div>
-        );
 
-      case 'all-courses':
-        return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {courses.map((course) => (
-              <Card key={course.id} className="bg-gray-900/50 border-gray-800 backdrop-blur-sm hover:border-gray-600/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10 group overflow-hidden">
-                <div className="relative">
-                  <img 
-                    src={course.image} 
-                    alt={course.title}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-sm rounded-full px-3 py-1">
-                    <span className="text-white text-sm font-medium">{course.readTime}</span>
+          {/* Navigation Tabs */}
+          <div className="flex gap-4 border-b border-gray-800">
+            <button
+              onClick={() => setActiveTab('dashboard')}
+              className={`px-6 py-3 font-semibold transition-all duration-200 border-b-2 ${
+                activeTab === 'dashboard' 
+                  ? 'text-blue-400 border-blue-400' 
+                  : 'text-gray-400 border-transparent hover:text-white'
+              }`}
+            >
+              📊 Dashboard
+            </button>
+            <button
+              onClick={() => setActiveTab('my-learning')}
+              className={`px-6 py-3 font-semibold transition-all duration-200 border-b-2 ${
+                activeTab === 'my-learning' 
+                  ? 'text-blue-400 border-blue-400' 
+                  : 'text-gray-400 border-transparent hover:text-white'
+              }`}
+            >
+              🎓 My Learning ({myCourses.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('all-courses')}
+              className={`px-6 py-3 font-semibold transition-all duration-200 border-b-2 ${
+                activeTab === 'all-courses' 
+                  ? 'text-blue-400 border-blue-400' 
+                  : 'text-gray-400 border-transparent hover:text-white'
+              }`}
+            >
+              📚 All Courses ({courses.length})
+            </button>
+          </div>
+
+          {/* Add Course Modal */}
+          {isAddCourseOpen && (
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+              <div className="bg-gray-900 border border-gray-800 rounded-lg w-full max-w-2xl max-h-[90vh] modal-scrollbar overflow-y-auto">
+                <div className="p-6">
+                  <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                      Create New Course
+                    </h2>
+                    <button 
+                      onClick={() => setIsAddCourseOpen(false)}
+                      className="text-gray-400 hover:text-white text-2xl font-bold transition-colors duration-200 hover:bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center"
+                    >
+                      ×
+                    </button>
                   </div>
-                  <div className="absolute top-4 left-4 flex gap-2">
-                    <Badge className={`${getCategoryColor(course.category)} text-white border-0`}>
-                      {course.category}
-                    </Badge>
-                    <Badge className={getDifficultyColor(course.difficulty)}>
-                      {course.difficulty}
-                    </Badge>
-                  </div>
-                </div>
-                
-                <CardContent className="p-6">
-                  <div className="space-y-4">
-                    <div>
-                      <p className="text-gray-400 text-sm">{course.date} • by {course.author}</p>
-                      <h3 className="text-lg font-semibold text-white mt-2 line-clamp-2 group-hover:text-blue-400 transition-colors duration-200">
-                        {course.title}
-                      </h3>
-                      <p className="text-gray-400 text-sm mt-2 line-clamp-3">{course.description}</p>
+                  
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="title">Course Title</Label>
+                        <Input
+                          id="title"
+                          value={courseForm.title}
+                          onChange={(e) => handleInputChange('title', e.target.value)}
+                          className="bg-gray-800 border-gray-700"
+                          placeholder="Enter course title"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="category">Category</Label>
+                        <Select value={courseForm.category} onValueChange={(value) => handleInputChange('category', value)}>
+                          <SelectTrigger className="bg-gray-800 border-gray-700">
+                            <SelectValue placeholder="Select category" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-800 border-gray-700">
+                            <SelectItem value="AI/ML">AI/ML</SelectItem>
+                            <SelectItem value="Programming">Programming</SelectItem>
+                            <SelectItem value="Web Dev">Web Development</SelectItem>
+                            <SelectItem value="Backend">Backend</SelectItem>
+                            <SelectItem value="Data Science">Data Science</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
 
-                    {/* Course Info */}
-                    <div className="flex items-center gap-4 text-sm text-gray-300">
-                      <span className="flex items-center gap-1">
-                        <span className="text-blue-400">⏱️</span>
-                        {course.duration}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <span className="text-green-400">👁️</span>
-                        {course.views}
-                      </span>
+                    <div className="space-y-2">
+                      <Label htmlFor="description">Description</Label>
+                      <textarea
+                        id="description"
+                        value={courseForm.description}
+                        onChange={(e) => handleInputChange('description', e.target.value)}
+                        className="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-h-[100px] resize-none"
+                        placeholder="Enter course description"
+                      />
                     </div>
 
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-2">
-                      {course.tags.map((tag, index) => (
-                        <span key={index} className="text-xs bg-gray-800 text-gray-300 px-2 py-1 rounded-full">
-                          #{tag}
-                        </span>
-                      ))}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="author">Author</Label>
+                        <Input
+                          id="author"
+                          value={courseForm.author}
+                          onChange={(e) => handleInputChange('author', e.target.value)}
+                          className="bg-gray-800 border-gray-700"
+                          placeholder="Author name"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="readTime">Read Time</Label>
+                        <Input
+                          id="readTime"
+                          value={courseForm.readTime}
+                          onChange={(e) => handleInputChange('readTime', e.target.value)}
+                          className="bg-gray-800 border-gray-700"
+                          placeholder="e.g., 8 min read"
+                        />
+                      </div>
                     </div>
 
-                    {/* Actions */}
-                    <div className="flex gap-2 pt-2 border-t border-gray-800">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="duration">Duration</Label>
+                        <Input
+                          id="duration"
+                          value={courseForm.duration}
+                          onChange={(e) => handleInputChange('duration', e.target.value)}
+                          className="bg-gray-800 border-gray-700"
+                          placeholder="e.g., 6 weeks"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="difficulty">Difficulty</Label>
+                        <Select value={courseForm.difficulty} onValueChange={(value) => handleInputChange('difficulty', value)}>
+                          <SelectTrigger className="bg-gray-800 border-gray-700">
+                            <SelectValue placeholder="Select difficulty" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-800 border-gray-700">
+                            <SelectItem value="Beginner">Beginner</SelectItem>
+                            <SelectItem value="Intermediate">Intermediate</SelectItem>
+                            <SelectItem value="Advanced">Advanced</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="image">Image URL</Label>
+                      <Input
+                        id="image"
+                        value={courseForm.image}
+                        onChange={(e) => handleInputChange('image', e.target.value)}
+                        className="bg-gray-800 border-gray-700"
+                        placeholder="Enter image URL"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="tags">Tags (comma separated)</Label>
+                      <Input
+                        id="tags"
+                        value={courseForm.tags}
+                        onChange={(e) => handleInputChange('tags', e.target.value)}
+                        className="bg-gray-800 border-gray-700"
+                        placeholder="e.g., neural-networks, deep-learning, ai"
+                      />
+                    </div>
+
+                    <div className="flex justify-end gap-4 pt-4">
                       <Button 
-                        onClick={() => addToMyLearning(course)}
-                        className="flex-1 bg-green-600 hover:bg-green-700 text-xs py-1"
-                        disabled={myCourses.find(c => c.id === course.id)}
+                        onClick={() => setIsAddCourseOpen(false)} 
+                        className="border border-gray-700 text-gray-300 hover:bg-gray-800 bg-transparent"
                       >
-                        {myCourses.find(c => c.id === course.id) ? 'Enrolled' : 'Enroll'}
+                        Cancel
                       </Button>
                       <Button 
-                        onClick={() => deleteCourse(course.id)}
-                        className="bg-red-600 hover:bg-red-700 text-xs py-1 px-3"
+                        onClick={handleSubmit} 
+                        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                       >
-                        Delete
+                        Create Course
                       </Button>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        );
-
-      default:
-        return null;
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-gray-950 text-white page-scrollbar overflow-y-auto">
-      <div className="container mx-auto p-6 space-y-8">
-        {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Learning Dashboard
-            </h1>
-            <p className="text-gray-400 mt-2">
-              Track your progress, manage courses, and analyze your learning journey
-            </p>
-          </div>
-          
-          <Button 
-            onClick={() => setIsAddCourseOpen(true)}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-          >
-            + Add New Course
-          </Button>
-        </div>
-
-        {/* Navigation Tabs */}
-        <div className="flex gap-4 border-b border-gray-800">
-          <button
-            onClick={() => setActiveTab('dashboard')}
-            className={`px-6 py-3 font-semibold transition-all duration-200 border-b-2 ${
-              activeTab === 'dashboard' 
-                ? 'text-blue-400 border-blue-400' 
-                : 'text-gray-400 border-transparent hover:text-white'
-            }`}
-          >
-            📊 Dashboard
-          </button>
-          <button
-            onClick={() => setActiveTab('my-learning')}
-            className={`px-6 py-3 font-semibold transition-all duration-200 border-b-2 ${
-              activeTab === 'my-learning' 
-                ? 'text-blue-400 border-blue-400' 
-                : 'text-gray-400 border-transparent hover:text-white'
-            }`}
-          >
-            🎓 My Learning ({myCourses.length})
-          </button>
-          <button
-            onClick={() => setActiveTab('all-courses')}
-            className={`px-6 py-3 font-semibold transition-all duration-200 border-b-2 ${
-              activeTab === 'all-courses' 
-                ? 'text-blue-400 border-blue-400' 
-                : 'text-gray-400 border-transparent hover:text-white'
-            }`}
-          >
-            📚 All Courses ({courses.length})
-          </button>
-        </div>
-
-        {/* Add Course Modal */}
-        {isAddCourseOpen && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-gray-900 border border-gray-800 rounded-lg w-full max-w-2xl max-h-[90vh] modal-scrollbar overflow-y-auto">
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                    Create New Course
-                  </h2>
-                  <button 
-                    onClick={() => setIsAddCourseOpen(false)}
-                    className="text-gray-400 hover:text-white text-2xl font-bold transition-colors duration-200 hover:bg-gray-800 rounded-full w-8 h-8 flex items-center justify-center"
-                  >
-                    ×
-                  </button>
-                </div>
-                
-                <div className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="title">Course Title</Label>
-                      <Input
-                        id="title"
-                        value={courseForm.title}
-                        onChange={(e) => handleInputChange('title', e.target.value)}
-                        className="bg-gray-800 border-gray-700"
-                        placeholder="Enter course title"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="category">Category</Label>
-                      <Select value={courseForm.category} onValueChange={(value) => handleInputChange('category', value)}>
-                        <SelectTrigger className="bg-gray-800 border-gray-700">
-                          <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-gray-800 border-gray-700">
-                          <SelectItem value="AI/ML">AI/ML</SelectItem>
-                          <SelectItem value="Programming">Programming</SelectItem>
-                          <SelectItem value="Web Dev">Web Development</SelectItem>
-                          <SelectItem value="Backend">Backend</SelectItem>
-                          <SelectItem value="Data Science">Data Science</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="description">Description</Label>
-                    <textarea
-                      id="description"
-                      value={courseForm.description}
-                      onChange={(e) => handleInputChange('description', e.target.value)}
-                      className="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-h-[100px] resize-none"
-                      placeholder="Enter course description"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="author">Author</Label>
-                      <Input
-                        id="author"
-                        value={courseForm.author}
-                        onChange={(e) => handleInputChange('author', e.target.value)}
-                        className="bg-gray-800 border-gray-700"
-                        placeholder="Author name"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="readTime">Read Time</Label>
-                      <Input
-                        id="readTime"
-                        value={courseForm.readTime}
-                        onChange={(e) => handleInputChange('readTime', e.target.value)}
-                        className="bg-gray-800 border-gray-700"
-                        placeholder="e.g., 8 min read"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="duration">Duration</Label>
-                      <Input
-                        id="duration"
-                        value={courseForm.duration}
-                        onChange={(e) => handleInputChange('duration', e.target.value)}
-                        className="bg-gray-800 border-gray-700"
-                        placeholder="e.g., 6 weeks"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="difficulty">Difficulty</Label>
-                      <Select value={courseForm.difficulty} onValueChange={(value) => handleInputChange('difficulty', value)}>
-                        <SelectTrigger className="bg-gray-800 border-gray-700">
-                          <SelectValue placeholder="Select difficulty" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-gray-800 border-gray-700">
-                          <SelectItem value="Beginner">Beginner</SelectItem>
-                          <SelectItem value="Intermediate">Intermediate</SelectItem>
-                          <SelectItem value="Advanced">Advanced</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="image">Image URL</Label>
-                    <Input
-                      id="image"
-                      value={courseForm.image}
-                      onChange={(e) => handleInputChange('image', e.target.value)}
-                      className="bg-gray-800 border-gray-700"
-                      placeholder="Enter image URL"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="tags">Tags (comma separated)</Label>
-                    <Input
-                      id="tags"
-                      value={courseForm.tags}
-                      onChange={(e) => handleInputChange('tags', e.target.value)}
-                      className="bg-gray-800 border-gray-700"
-                      placeholder="e.g., neural-networks, deep-learning, ai"
-                    />
-                  </div>
-
-                  <div className="flex justify-end gap-4 pt-4">
-                    <Button 
-                      onClick={() => setIsAddCourseOpen(false)} 
-                      className="border border-gray-700 text-gray-300 hover:bg-gray-800 bg-transparent"
-                    >
-                      Cancel
-                    </Button>
-                    <Button 
-                      onClick={handleSubmit} 
-                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                    >
-                      Create Course
-                    </Button>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Tab Content */}
-        {renderTabContent()}
+          {/* Tab Content */}
+          {renderTabContent()}
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
+

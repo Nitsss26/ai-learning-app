@@ -171,4 +171,3 @@ const SectionCards = () => {
         </div>
     );
 }
-

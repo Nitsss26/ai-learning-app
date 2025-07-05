@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from 'react';
+import type { FormEvent } from "react";
+
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -12,18 +14,24 @@ export default function ContactPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState('');
-  const [expandedFaq, setExpandedFaq] = useState(null);
+  //  const [expandedFaq, setExpandedFaq] = useState(null);
+   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+ 
 
-  const handleInputChange = (e: any) => {
-    const { name, value } = e.target;
+  const handleInputChange = (e:  unknown) => {
+    
+    const target = (e as { target: HTMLInputElement }).target;
+    const { name, value } = target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
   };
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+   
+     e.preventDefault();
+    
     setIsSubmitting(true);
     
     // Simulate form submission
@@ -43,9 +51,11 @@ export default function ContactPage() {
       }, 3000);
     }, 2000);
   };
+  
 
-  const toggleFaq = (index: any) => {
-    setExpandedFaq(expandedFaq === index ? null : index);
+  const toggleFaq = (index:  number) => {
+    // setExpandedFaq(expandedFaq === index ? null : index);
+    setExpandedFaq((prev) => (prev === index ? null : index));
   };
 
   const faqData = [
@@ -129,7 +139,7 @@ export default function ContactPage() {
             Contact Support
           </h1>
           <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-            We're here to help you succeed in your AI learning journey. Reach out to us anytime.
+            We are here to help you succeed in your AI learning journey. Reach out to us anytime.
           </p>
         </div>
 
@@ -243,7 +253,7 @@ export default function ContactPage() {
 
                 {submitStatus === 'success' && (
                   <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4 text-green-300 text-center">
-                    ✅ Message sent successfully! We'll get back to you soon.
+                    ✅ Message sent successfully! We will get back to you soon.
                   </div>
                 )}
               </form>

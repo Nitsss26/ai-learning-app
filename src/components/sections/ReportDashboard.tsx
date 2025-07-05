@@ -1,5 +1,6 @@
 'use client';
 
+import { TooltipProps } from 'recharts';
 import { useState, useEffect } from 'react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -78,7 +79,7 @@ export default function ReportsPage() {
     { week: 'Week 8', streak: 18 },
   ];
 
-  const CustomTooltip = ({ active, payload, label }) => {
+  const CustomTooltip = ({ active, payload, label }  : TooltipProps<number, string>) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-slate-800 border border-slate-600 rounded-lg p-3 shadow-lg">

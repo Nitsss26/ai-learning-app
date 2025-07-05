@@ -1,5 +1,5 @@
 "use client";
-
+import { TooltipProps } from 'recharts';
 import { useState } from 'react';
 import { AreaChart, Area, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
@@ -56,7 +56,7 @@ const LogsDashboard = () => {
     }
   };
 
-  const CustomTooltip = ({ active, payload, label }) => {
+  const CustomTooltip = ({ active, payload, label } : TooltipProps<number, string>) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 shadow-xl">

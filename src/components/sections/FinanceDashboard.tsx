@@ -1,7 +1,9 @@
 'use client';
-
+import { TooltipProps } from 'recharts';
 import { useState, useEffect } from 'react';
-import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ComposedChart } from 'recharts';
+import { LineChart, Line,  Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ComposedChart } from 'recharts';
+
+
 
 export default function FinancePage() {
   const [mounted, setMounted] = useState(false);
@@ -69,7 +71,7 @@ export default function FinancePage() {
     { category: 'Equipment & Tools', allocated: 1200, spent: 750, remaining: 450, percentage: 62.5 },
   ];
 
-  const CustomTooltip = ({ active, payload, label }) => {
+  const CustomTooltip = ({ active, payload, label } : TooltipProps<number, string>) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-slate-800 border border-slate-600 rounded-lg p-3 shadow-lg">
@@ -85,7 +87,7 @@ export default function FinancePage() {
     return null;
   };
 
-  const formatCurrency = (value) => {
+  const formatCurrency = (value : number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
