@@ -316,8 +316,6 @@
 import FooterSection from "@/components/sections/FooterSection";
 import NavSection from "@/components/sections/NavSection";
 import { cn } from "@/lib/utils";
-// import { Stars } from "@react-three/drei";
-// import { Canvas } from "@react-three/fiber";
 import { IconCalendar } from "@tabler/icons-react";
 import axios from "axios";
 import { motion } from "motion/react";
@@ -341,8 +339,7 @@ export default function Blogs() {
     const fetchBlogs = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('/api/blogs?all:true', {
-        });
+        const response = await axios.get('/api/blogs?all:true');
 
         if (response.data.error) throw new Error(response.data.error);
 
@@ -350,7 +347,7 @@ export default function Blogs() {
           id: blog.id,
           category: blog.category,
           title: blog.title,
-          src: blog.image_url || 'https://via.placeholder.com/150',
+          src: blog.src || 'https://via.placeholder.com/150',
           publishDate: blog.created_at || "Unknown Date",
         }));
 
@@ -401,19 +398,18 @@ export default function Blogs() {
             }}
             className="rounded-3xl overflow-hidden w-[90%] md:w-96"
           >
-            <Link href={`/blogs/${card.id}`}>
+            <Link href={`/blogs/${card.title}`}>
               <motion.button className="relative z-10 flex h-80 w-full flex-col items-start justify-start overflow-hidden rounded-3xl bg-gray-100 md:h-[40rem] md:w-96 dark:bg-neutral-900">
                 <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-full bg-gradient-to-b from-black/50 via-transparent to-transparent" />
                 <div className="relative z-40 p-8">
-                  <p className="text-left text-sm mb-2 font-medium text-white">
-                    <div className="flex items-center gap-2">
-                      <IconCalendar className="text-white" />
-                      {card.publishDate}
-                    </div>
-                  </p>
+                  <div className="flex items-center gap-2 text-left text-sm mb-2 font-medium text-white">
+                    <IconCalendar className="text-white" />
+                    {card.publishDate}
+                  </div>
                   <p className="mt-2 max-w-xs text-left text-xl font-semibold text-white md:text-3xl">
                     {card.title}
                   </p>
+                </div>
                 <Image
                   className={cn("absolute inset-0 h-full w-full object-cover transition duration-300")}
                   src={card.src}
@@ -422,7 +418,6 @@ export default function Blogs() {
                   sizes="(max-width: 768px) 100vw, 384px"
                   priority={index < 2}
                 />
-                </div>
               </motion.button>
             </Link>
           </motion.div>
@@ -430,11 +425,7 @@ export default function Blogs() {
       </div>
 
       <FooterSection />
-      {/* <div className="absolute inset-0 z-0 w-full h-full">
-        <Canvas>
-          <Stars radius={100} count={2500} factor={3} fade speed={1} />
-        </Canvas>
-      </div> */}
     </div>
   );
 }
+

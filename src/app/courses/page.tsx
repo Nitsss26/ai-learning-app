@@ -81,7 +81,7 @@ export function CourseList() {
     fetchCourses()
   }, [])
 
-  console.log("Features:", features);
+//   console.log("Features:", features);
     // const features = [
     //     {
     //         title: "Introduction to Machine Learning",

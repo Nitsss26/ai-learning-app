@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
 import { type NextRequest, NextResponse } from "next/server"
+import jwt from "jsonwebtoken"
 
 export async function POST(request: NextRequest) {
   try {
@@ -42,10 +43,14 @@ export async function POST(request: NextRequest) {
         console.error("Profile creation error:", profileError)
       }
     }
-
+    const token = jwt.sign(
+      { userId: authData.user?.id, email: authData.user?.email },
+      process.env.NEXT_PUBLIC_JWT_SECRET as string,
+      { expiresIn: "1d" }
+    )
     return NextResponse.json({
       message: "Registration successful. Please check your email to verify your account.",
-      user: authData.user,
+      token: token
     })
   } catch (error) {
     console.error("Registration error:", error)

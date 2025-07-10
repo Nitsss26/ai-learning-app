@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
 import { type NextRequest, NextResponse } from "next/server"
+import jwt from "jsonwebtoken"
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,11 +23,17 @@ export async function POST(request: NextRequest) {
 
     // Get user profile
     const { data: profile } = await supabase.from("profiles").select("*").eq("id", data.user.id).single()
+    const token = jwt.sign({
+      userId: data.user.id,
+      email: data.user.email,
+    }, process.env.NEXT_PUBLIC_JWT_SECRET as string, {
+      expiresIn: "1d",
+    })
 
     return NextResponse.json({
       message: "Login successful",
-      user: data.user,
-      profile,
+      token: token,
+      profile:profile,
     })
   } catch (error) {
     console.error("Login error:", error)

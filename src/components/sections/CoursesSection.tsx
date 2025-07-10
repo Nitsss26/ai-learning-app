@@ -86,7 +86,24 @@ export default function CoursesSection() {
     fetchCourses()
   }, [])
 
-  console.log("Features:", features);
+//   console.log("Features:", features);
+    if (loading) {
+        return (
+            <section id="courses">
+                <div className="relative bg-[#020b1a] flex justify-between items-center flex-col z-20 py-10 lg:py-40 max-w-7xl mx-auto">
+                    <div className="px-8">
+                        <h4 className="text-3xl lg:text-5xl lg:leading-tight max-w-5xl mx-auto text-center tracking-tight font-medium text-black dark:text-white">
+                            Explore Our Courses
+                        </h4>
+                        <p className="text-sm lg:text-base max-w-2xl my-4 mx-auto text-neutral-500 text-center font-normal dark:text-neutral-300">
+                            Loading courses...
+                        </p>
+                    </div>
+                </div>
+            </section>
+        );
+    }
+
     return (
         <section id="courses">
             <div className="relative bg-[#020b1a] flex justify-between items-center flex-col z-20 py-10 lg:py-40 max-w-7xl mx-auto">
@@ -115,8 +132,8 @@ export default function CoursesSection() {
                         </div>
                     </div>
                     
-                    <Link href={'/courses'}>
-                        <button className=" cursor-pointer w-60 mt-4 transform rounded-lg border border-gray-300 bg-white px-6 py-2 font-medium text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:bg-gray-900">
+                    <Link href={'/courses'} className="flex justify-center items-center">
+                        <button className=" cursor-pointer w-60 mt-4 transform rounded-lg border border-gray-300 bg-white px-6 py-2 font-medium text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:bg-gray-900 mx-auto">
                             Explore More Courses
                         </button>
                     </Link>

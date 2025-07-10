@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/authcontext";
 
 export default function Page() {
     const COLORS_TOP = React.useMemo(() => ["#13FFAA", "#1E67C6", "#CE84CF", "#DD335C"], []);
@@ -55,6 +56,7 @@ export default function Page() {
 
 export function SignupForm() {
     const router = useRouter();
+    const { setUserFromToken } = useAuth();
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -91,11 +93,16 @@ export function SignupForm() {
                 lastName: formData.lastName,
             });
 
+            const token = res.data.token;
+            if (token) {
+                localStorage.setItem("token", token);
+            }
+            setUserFromToken();
             setSuccess(res.data.message || "Registration successful");
             setLoading(false);
             setTimeout(() => {
                 router.push("/"); 
-            }, 3000);
+            }, 2000);
 
         } catch (err: any) {
             setError(err.response?.data?.error || "Unexpected error occurred");

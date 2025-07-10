@@ -1,4 +1,5 @@
 'use client'
+import { useAuth } from "@/context/authcontext";
 // import { Stars } from "@react-three/drei";
 // import { Canvas } from "@react-three/fiber";
 import { animate } from "motion";
@@ -11,7 +12,10 @@ import { FiArrowRight } from "react-icons/fi";
 export default function HeroSection() {
     const COLORS_TOP = useMemo(() => ["#13FFAA", "#1E67C6", "#CE84CF", "#DD335C"], []);
     const color = useMotionValue(COLORS_TOP[0]);
-
+    const auth = useAuth();
+    const user = auth?.user;
+    console.log("User in HeroSection:", user);
+    
     useEffect(() => {
         animate(color, COLORS_TOP, {
             ease: "easeInOut",

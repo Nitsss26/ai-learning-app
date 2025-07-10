@@ -1,7 +1,9 @@
+import { useAuth } from "@/context/authcontext";
 import { cn } from "@/lib/utils";
 import {IconMenu2 } from "@tabler/icons-react";
 import Link from "next/link";
 import React, { useState } from "react";
+import { Button } from "../ui/button";
 
 interface ListItemProps {
     children: React.ReactNode;
@@ -30,6 +32,13 @@ const ListItem: React.FC<ListItemProps> = ({ children, NavLink, className }) => 
 
 const NavSection = () => {
     const [open, setOpen] = useState(false);
+    const auth = useAuth();
+    const user = auth?.user;
+
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        window.location.href = "/";
+    }
 
     return (
         <header className={`absolute top-2 md:top-0 p-2 z-50 flex w-full justify-center items-center bg-transparent `}>
@@ -64,17 +73,22 @@ const NavSection = () => {
                                     <ListItem NavLink="/courses" className="text-white hover:text-primary">Courses</ListItem>
                                     <ListItem NavLink="/blogs" className="text-white hover:text-primary">Blogs</ListItem>
                                     <ListItem NavLink="/about" className="text-white hover:text-primary">About</ListItem>
-                                    <ListItem NavLink="/dashboard" className="text-white hover:text-primary">Dashboard</ListItem>
+                                    {user?.role === 'student' && <ListItem NavLink="/dashboard" className="text-white hover:text-primary">Dashboard</ListItem>}
+                                    {user?.role === 'admin' && <ListItem NavLink="/admin-dashboard" className="text-white hover:text-primary">Dashboard</ListItem>}
                                 </ul>
                             </nav>
                         </div>
                         <div className="hidden justify-end pr-16 gap-1 sm:flex lg:pr-0">
-                            <Link href={"/login"} className="w-30 transform rounded-lg text-center bg-black px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200">
+                           {!user? <Link href={"/login"} className="w-30 transform rounded-lg text-center bg-black px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200">
                                 Login
                             </Link>
-                            <Link href={"/signup"} className="w-30 text-center transform rounded-lg border border-gray-300 bg-white px-6 py-2 font-medium text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:bg-gray-900">
+                            :
+                            <Button onClick={handleLogout} className="w-30 transform rounded-lg text-center bg-black px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200">
+                                Logout
+                            </Button>}
+                            {!user && <Link href={"/signup"} className="w-30 text-center transform rounded-lg border border-gray-300 bg-white px-6 py-2 font-medium text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:bg-gray-900">
                                 Sign Up
-                            </Link>
+                            </Link>}
                         </div>
                     </div>
                 </div>
