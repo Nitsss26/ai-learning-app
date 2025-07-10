@@ -1,30 +1,25 @@
 import { createClient } from "@/lib/supabase/server"
 import { type NextRequest, NextResponse } from "next/server"
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest) {
   try {
+    const {title} = await request.json()
+    
+    if (!title) {
+      return NextResponse.json({ error: "Title is required" }, { status: 400 })
+    }
+
     const supabase = createClient()
 
     const { data, error } = await supabase
       .from("courses")
       .select(`
-        *,
-        course_reviews (
-          id,
-          rating,
-          review_text,
-          created_at,
-          profiles:user_id (
-            full_name,
-            avatar_url
-          )
-        )
-      `)
-      .eq("id", params.id)
-      .eq("is_published", true)
+        *`)
+      .eq("title", title)
+      // .eq("is_published", true)
       .single()
 
-    if (error) {
+    if (error || !data) {
       return NextResponse.json({ error: "Course not found" }, { status: 404 })
     }
 

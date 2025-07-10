@@ -1,94 +1,142 @@
 'use client'
 import FooterSection from "@/components/sections/FooterSection";
 import NavSection from "@/components/sections/NavSection";
-import { Stars } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
+// import { Stars } from "@react-three/drei";
+// import { Canvas } from "@react-three/fiber";
 // import { CourseList } from "../page";
 import { IconClockHour3, IconUsersGroup, IconStarFilled, IconGrowth, IconBriefcase, IconCertificate, IconDeviceTvOld, IconHeadset, IconListDetails, IconMap, IconRouteSquare, IconStar } from "@tabler/icons-react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
-import Image from "next/image";
+import { useEffect, useState } from "react";
+// import Image from "next/image";
 // import CountUp from "react-countup";
 import CourseReviewsSection from "@/components/sections/CourseReviewsSection";
+import axios from "axios";
+import { useParams } from "next/navigation";
 
+interface Syllabus {
+    week: string,
+    topic: string,
+    objectives: string[],
+}
 
+interface Course {
+    title: string;
+    description: string;
+    duration_weeks: string;
+    students_enrolled: string;
+    rating: string;
+    syllabus: Syllabus[];
+}
 export default function Page() {
+    const [course, setCourse] = useState<Course>()
+    const [loading, setLoading] = useState(false)
+    const params = useParams();
+    const rawTitle = params.id as string;
+    const title = decodeURIComponent(rawTitle)
+    // console.log("title:", typeof(title)  );
+
+    useEffect(() => {
+        const fetchCourses = async () => {
+            setLoading(true)
+            try {
+                const response = await axios.post(`/api/courses/${title}`, { title })
+                const courses = response.data
+                // console.log("Fetched courses:", courses)
+
+                setCourse(courses)
+            } catch (err) {
+                console.error("Failed to fetch courses:", err)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchCourses()
+    }, [rawTitle,title])
+
     return (
         <div className="w-full h-full flex bg-[#020b1a] tracking-tight justify-center flex-col items-center">
             <NavSection />
+            {loading ? (
+                <div className="w-full h-screen flex justify-center items-center bg-[#020b1a]">
+                    <div className="text-white text-2xl">Loading...</div>
+                </div>
+            ) : (
+                <>
+                    <div className="w-full flex mt-[120px] justify-between items-center flex-col">
 
-            <div className="w-full flex mt-[120px] justify-between items-center flex-col">
+                        <h4 className="text-3xl lg:text-5xl lg:leading-tight text-center  font-medium text-black dark:text-white">
+                            {course?.title || "Course Title"}
+                        </h4>
 
-                <h4 className="text-3xl lg:text-5xl lg:leading-tight text-center  font-medium text-black dark:text-white">
-                    Learn Machine Learning with Us
-                </h4>
+                        <p className="text-sm lg:text-base w-full md:w-[50%] my-4 mx-auto  text-neutral-500 text-center">
+                            Dive into our comprehensive courses designed to help you master AI and Machine Learning. Whether you&apos;re a beginner or an expert, we have something for everyone.
+                        </p>
+                        <FeaturesContent course = {course}/>
+                    </div>
 
-                <p className="text-sm lg:text-base w-full md:w-[50%] my-4 mx-auto  text-neutral-500 text-center">
-                    Dive into our comprehensive courses designed to help you master AI and Machine Learning. Whether you&apos;re a beginner or an expert, we have something for everyone.
-                </p>
-                <FeaturesContent />
-            </div>
-
-            <motion.div
-                initial={{
-                    opacity: 0,
-                    y: 10,
-                }}
-                animate={{
-                    opacity: 1,
-                    y: 0,
-                }}
-                transition={{
-                    duration: 0.3,
-                    delay: 1.2,
-                }}
-                className="relative w-[90%] md:w-[80%] z-1000 mt-10 rounded-3xl border border-neutral-200 bg-neutral-100 p-4 shadow-md dark:border-neutral-800 dark:bg-neutral-900"
-            >
-                <div className="flex flex-col md:flex-row gap-4">
-                    {/* Left Side - Video */}
-                    <div className="w-full md:w-1/2 overflow-hidden rounded-xl border border-gray-300 dark:border-gray-700">
-                        <iframe
+                    <motion.div
+                        initial={{
+                            opacity: 0,
+                            y: 10,
+                        }}
+                        animate={{
+                            opacity: 1,
+                            y: 0,
+                        }}
+                        transition={{
+                            duration: 0.3,
+                            delay: 1.2,
+                        }}
+                        className="relative w-[90%] md:w-[80%] z-1000 mt-10 rounded-3xl border border-neutral-200 bg-neutral-100 p-4 shadow-md dark:border-neutral-800 dark:bg-neutral-900"
+                    >
+                        <div className="flex flex-col md:flex-row gap-4">
+                            {/* Left Side - Video */}
+                            <div className="w-full md:w-1/2 overflow-hidden rounded-xl border border-gray-300 dark:border-gray-700">
+                                <iframe
                             className="w-full h-[200px] md:h-[300px] xl:h-[400px]"
                             src="https://www.youtube.com/embed/qYNweeDHiyU?si=3dY9f2cQQo37AYwo"
                             title="YouTube video player"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         ></iframe>
-                    </div>
+                            </div>
 
-                    {/* Right Side - Course Info */}
-                    <div className="w-full md:w-1/2 flex flex-col justify-center px-2 md:px-4">
-                        <h1 className="text-3xl lg:text-5xl lg:leading-tight  font-medium text-black dark:text-white">Course Overview</h1>
-                        <p className="text-base text-gray-700 dark:text-gray-300">
-                            Master the foundational concepts of Mechanic and Electrodynamics tailored for the IIT-JEE Physics syllabus. This course covers motion, Newton&apos;s laws, work-energy, circuits, electrostatics, and magnetism with crystal-clear explanations and problem-solving strategies.
-                            Build confidence through structured lessons, conceptual clarity, and guided practice.
-                            Perfect for aspirants aiming for top ranks, this course bridges theory and application seamlessly.
+                            {/* Right Side - Course Info */}
+                            <div className="w-full md:w-1/2 flex flex-col justify-center px-2 md:px-4">
+                                <h1 className="text-3xl lg:text-5xl lg:leading-tight  font-medium text-black dark:text-white">Course Overview</h1>
+                                <p className="text-base text-gray-700 dark:text-gray-300">
+                                    Master the core principles of Physics, thoughtfully designed to align with competitive exam requirements and academic excellence. This course offers clear explanations, structured lessons, and practical problem-solving strategies to build deep understanding and confidence.
 
-                        </p>
-                    </div>
-                </div>
-            </motion.div>
+                                    Whether you&apos;re aiming for top ranks or a strong conceptual foundation, this course bridges theory and real-world application through guided practice and expert instruction.
+
+                                </p>
+                            </div>
+                        </div>
+                    </motion.div>
 
 
-            <CourseDescription />
-            {/* <StatsSection /> */}
-            <Modules />
-            <Team />
-            <CourseReviewsSection />
-            <Accordion />
-            <CourseBenefits />
-            <FooterSection />
-            <div className="absolute inset-0 z-0 w-screen">
-                <Canvas>
-                    <Stars radius={100} count={2500} factor={3} fade speed={1} />
-                </Canvas>
-            </div>
+                    <CourseDescription description={course?.description} />
+                    {/* <StatsSection /> */}
+                    <Modules syllabus={course?.syllabus} />
+                    {/* <Team /> */}
+                    <CourseReviewsSection />
+                    <Accordion />
+                    <CourseBenefits />
+                    <FooterSection />
+                    {/* <div className="absolute inset-0 z-0 w-screen">
+                        <Canvas>
+                            <Stars radius={100} count={2500} factor={3} fade speed={1} />
+                        </Canvas>
+                    </div> */}
+                </>
+            )}
         </div>
     );
 }
 
 
-export const FeaturesContent = () => {
+export const FeaturesContent = ({course}:{course:Course | undefined}) => {
     return (
         <div className="flex flex-row items-center justify-center flex-wrap w-full gap-4 mt-4">
             <div className="flex flex-row items-center justify-center">
@@ -96,7 +144,7 @@ export const FeaturesContent = () => {
                     <IconClockHour3 stroke={2} />
                 </h4>
                 <p className="text-sm text-neutral-500 dark:text-neutral-300 max-w-md text-center">
-                    8 weeks
+                    {course?.duration_weeks || "0"} weeks
                 </p>
             </div>
             <div className="flex flex-row items-center justify-center">
@@ -104,7 +152,7 @@ export const FeaturesContent = () => {
                     <IconUsersGroup stroke={2} />
                 </h4>
                 <p className="text-sm text-neutral-500 dark:text-neutral-300 max-w-md text-center">
-                    1200+ Students Enrolled
+                    {course?.students_enrolled || "0"}+ Students Enrolled
                 </p>
             </div>
             <div className="flex flex-row items-center justify-center">
@@ -112,7 +160,7 @@ export const FeaturesContent = () => {
                     <IconStarFilled stroke={2} />
                 </h4>
                 <p className="text-sm text-neutral-500 dark:text-neutral-300 max-w-md text-center">
-                    4.8/5
+                    {course?.rating || "0"}/5
                 </p>
             </div>
 
@@ -129,14 +177,13 @@ export const FeaturesContent = () => {
     )
 }
 
-function CourseDescription() {
+function CourseDescription({description}: {description?: string}) {
     return (
         <div className="flex flex-col items-start justify-center flex-wrap w-[80%] gap-4 mt-4">
             <p className="text-sm text-start text-neutral-500 max-w-md ">Course Description</p>
             {/* long paragraph */}
             <p className="text-sm text-start text-white">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem officiis alias numquam eaque debitis placeat dolorum consequuntur quia natus facere eveniet optio neque cumque culpa, libero quo cum. Facere, animi?
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. At soluta tenetur distinctio in vero quidem nisi suscipit fugit, fuga mollitia blanditiis esse! Veritatis, officia pariatur tempora sequi sed fugiat. Inventore optio dolor praesentium pariatur! Laboriosam excepturi atque, beatae sapiente, quod veniam recusandae sit, iusto assumenda minus quibusdam illum repudiandae nam culpa. Incidunt repellat ad deserunt omnis delectus, iure minus amet voluptas sunt iusto numquam quasi qui veniam debitis laboriosam nulla accusamus quas consequatur, asperiores placeat totam fuga maiores. Adipisci dolores repellat, libero omnis harum fugit perferendis labore fugiat magni at quos neque nihil ab vel nobis consectetur repellendus expedita soluta deleniti officia laudantium eius? Perferendis provident maxime nihil praesentium, harum minus autem, delectus amet tempora animi ab voluptatem, veritatis esse. Eos vel labore, error necessitatibus odit sit dolorem ipsam praesentium expedita ratione velit, autem modi? Sequi ipsam ducimus cum laboriosam sint dolores inventore velit autem. Temporibus debitis suscipit minus quos incidunt. Illo omnis facere repudiandae dolorum excepturi modi, laudantium temporibus sapiente! Quibusdam obcaecati eum tenetur, illum blanditiis ut natus reprehenderit temporibus iure quas sint consectetur velit dolore illo magni perspiciatis quo consequatur ullam unde exercitationem quod quidem dicta similique? Laboriosam nulla aperiam, dolorem inventore ea ipsum praesentium quasi non commodi nihil laborum alias. Quod voluptates, pariatur commodi vero quae consequatur, ipsam tenetur facilis corrupti, perspiciatis sit quam! Dolore, velit dicta expedita eveniet nisi sed rem provident ea tempora porro dolores, doloribus fugit nostrum nihil! Assumenda, velit, beatae quo quae aut suscipit harum quibusdam omnis accusantium veritatis eius? Eaque officiis quaerat sit laudantium? Soluta quae hic voluptatibus iusto sed repellendus iste in cupiditate odit libero. Excepturi fugiat autem sunt nam omnis, nemo quod officia ea ipsa blanditiis earum dolor quisquam numquam, harum consequuntur in necessitatibus. Ullam fugiat vero porro aut a aspernatur animi ex iusto delectus, laudantium laborum ipsum qui minus expedita optio libero explicabo consequatur eum sunt eius vitae repellat? Labore deserunt laudantium neque quis sit quos quaerat rerum voluptate odit, dolor molestiae cum architecto libero! Fuga esse nesciunt quod non corporis consequuntur libero dolor debitis excepturi! Perspiciatis amet corporis delectus aliquid et ratione, neque error. Doloribus obcaecati, cupiditate voluptatum dolores a, distinctio minus dolore vel pariatur quisquam in mollitia assumenda eaque perferendis nisi voluptatibus. Voluptatum, est cumque assumenda autem molestiae ea minima dolorem inventore pariatur quaerat in, nam, sint obcaecati quia suscipit vel doloremque veritatis aliquam officia fuga exercitationem. Inventore non tempora, corporis architecto deserunt pariatur ipsa cum beatae asperiores quas. Esse accusantium ipsum debitis! Voluptatem harum repellat culpa magnam distinctio facilis aperiam nesciunt ea totam saepe! Atque illum reiciendis sed natus rerum cupiditate dolor doloribus nam magnam? Tempora debitis fuga quia quos ut labore cum temporibus, aspernatur sunt blanditiis accusantium praesentium nisi dolores, quae consequuntur. Fugiat hic totam maiores mollitia soluta voluptates blanditiis sed inventore animi ratione reiciendis ab ipsa placeat dolore nemo reprehenderit quisquam illo quam fuga, quibusdam aspernatur fugit magni, harum quod? Dolor ratione iure earum aliquam blanditiis quam reiciendis dolorum eos laborum cumque culpa esse repudiandae ad architecto sed harum voluptatum ducimus, optio error nostrum?
+                {description || "Course description"}
             </p>
         </div>
     )
@@ -263,8 +310,7 @@ const Accordion = () => {
                                 Any Questions? Look Here
                             </h2>
                             <p className="text-base text-body-color text-gray-600">
-                                There are many variations of passages of Lorem Ipsum available
-                                but the majority have suffered alteration in some form.
+                                Our courses are thoughtfully designed to provide clarity, structure, and real-world relevance, helping learners build strong foundations and confidently achieve their goals.
                             </p>
                         </div>
                     </div>
@@ -394,250 +440,250 @@ const AccordionItem = ({ header, text }: AccordionItemProps) => {
 
 
 
-const Team = () => {
-    return (
-        <section className="pb-10 pt-10 dark:bg-dark lg:pb-20 lg:pt-[60px]">
-            <div className="container">
-                <div className="flex flex-wrap">
-                    <div className="w-full">
-                        <div className="mx-auto mb-[60px] max-w-[510px] text-center">
-                            <span className="mb-2 block text-lg font-semibold text-gray-200">
-                                Educators
-                            </span>
-                            <h2 className="mb-3 text-3xl font-bold leading-[1.2] text-white sm:text-4xl md:text-[40px]">
-                                Our Awesome Team
-                            </h2>
-                            <p className="text-base text-gray-300">
-                                There are many variations of passages of Lorem Ipsum available
-                                but the majority have suffered alteration in some form.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div className="flex flex-wrap justify-center gap-4">
-                    <TeamMemberCard
-                        name="Coriss Ambady"
-                        jobTitle="Web Developer"
-                        imageSrc="https://cdn.tailgrids.com/assets/images/marketing/team/team-01/image-03.jpg"
-                    />
-                    <TeamMemberCard
-                        name="Coriss Ambady"
-                        jobTitle="Web Developer"
-                        imageSrc="https://cdn.tailgrids.com/assets/images/marketing/team/team-01/image-02.jpg"
-                    />
-                    <TeamMemberCard
-                        name="Coriss Ambady"
-                        jobTitle="Web Developer"
-                        imageSrc="https://cdn.tailgrids.com/assets/images/marketing/team/team-01/image-01.jpg"
-                    />
-                    <TeamMemberCard
-                        name="Coriss Ambady"
-                        jobTitle="Web Developer"
-                        imageSrc="https://cdn.tailgrids.com/assets/images/marketing/team/team-01/image-04.jpg"
-                    />
-                </div>
+// const Team = () => {
+//     return (
+//         <section className="pb-10 pt-10 dark:bg-dark lg:pb-20 lg:pt-[60px]">
+//             <div className="container">
+//                 <div className="flex flex-wrap">
+//                     <div className="w-full">
+//                         <div className="mx-auto mb-[60px] max-w-[510px] text-center">
+//                             <span className="mb-2 block text-lg font-semibold text-gray-200">
+//                                 Educators
+//                             </span>
+//                             <h2 className="mb-3 text-3xl font-bold leading-[1.2] text-white sm:text-4xl md:text-[40px]">
+//                                 Our Awesome Team
+//                             </h2>
+//                             <p className="text-base text-gray-300">
+//                                 There are many variations of passages of Lorem Ipsum available
+//                                 but the majority have suffered alteration in some form.
+//                             </p>
+//                         </div>
+//                     </div>
+//                 </div>
+//                 <div className="flex flex-wrap justify-center gap-4">
+//                     <TeamMemberCard
+//                         name="Coriss Ambady"
+//                         jobTitle="Web Developer"
+//                         imageSrc="https://cdn.tailgrids.com/assets/images/marketing/team/team-01/image-03.jpg"
+//                     />
+//                     <TeamMemberCard
+//                         name="Coriss Ambady"
+//                         jobTitle="Web Developer"
+//                         imageSrc="https://cdn.tailgrids.com/assets/images/marketing/team/team-01/image-02.jpg"
+//                     />
+//                     <TeamMemberCard
+//                         name="Coriss Ambady"
+//                         jobTitle="Web Developer"
+//                         imageSrc="https://cdn.tailgrids.com/assets/images/marketing/team/team-01/image-01.jpg"
+//                     />
+//                     <TeamMemberCard
+//                         name="Coriss Ambady"
+//                         jobTitle="Web Developer"
+//                         imageSrc="https://cdn.tailgrids.com/assets/images/marketing/team/team-01/image-04.jpg"
+//                     />
+//                 </div>
 
 
-            </div>
-        </section>
-    );
-};
+//             </div>
+//         </section>
+//     );
+// };
 
 
-interface TeamMemberCardProps {
-    imageSrc: string;
-    name: string;
-    jobTitle: string;
-}
+// interface TeamMemberCardProps {
+//     imageSrc: string;
+//     name: string;
+//     jobTitle: string;
+// }
 
-const TeamMemberCard = ({ imageSrc, name, jobTitle }: TeamMemberCardProps) => (
-    <div className="w-full px-4 md:w-1/2 xl:w-1/4">
-        <div className="mb-10 w-full">
-            <div className="relative overflow-hidden rounded-lg">
-                <Image src={imageSrc} alt={name} className="w-full" width={400} height={400} />
-                <div className="absolute bottom-5 left-0 w-full text-center">
-                    <div className="relative mx-5 overflow-hidden rounded-lg bg-white px-3 py-5 dark:bg-dark-2">
-                        <h3 className="text-base font-semibold text-[#020b1a]">
-                            {name}
-                        </h3>
-                        <p className="text-xs text-body-color dark:text-dark-6">
-                            {jobTitle}
-                        </p>
-                        <div>
-                            <span className="absolute bottom-0 left-0">
-                                <svg
-                                    width={61}
-                                    height={30}
-                                    viewBox="0 0 61 30"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <circle
-                                        cx={16}
-                                        cy={45}
-                                        r={45}
-                                        fill="#13C296"
-                                        fillOpacity="0.11"
-                                    />
-                                </svg>
-                            </span>
-                            <span className="absolute right-0 top-0">
-                                <svg
-                                    width={20}
-                                    height={25}
-                                    viewBox="0 0 20 25"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <circle
-                                        cx="0.706257"
-                                        cy="24.3533"
-                                        r="0.646687"
-                                        transform="rotate(-90 0.706257 24.3533)"
-                                        fill="#3056D3"
-                                    />
-                                    <circle
-                                        cx="6.39669"
-                                        cy="24.3533"
-                                        r="0.646687"
-                                        transform="rotate(-90 6.39669 24.3533)"
-                                        fill="#3056D3"
-                                    />
-                                    <circle
-                                        cx="12.0881"
-                                        cy="24.3533"
-                                        r="0.646687"
-                                        transform="rotate(-90 12.0881 24.3533)"
-                                        fill="#3056D3"
-                                    />
-                                    <circle
-                                        cx="17.7785"
-                                        cy="24.3533"
-                                        r="0.646687"
-                                        transform="rotate(-90 17.7785 24.3533)"
-                                        fill="#3056D3"
-                                    />
-                                    <circle
-                                        cx="0.706257"
-                                        cy="18.6624"
-                                        r="0.646687"
-                                        transform="rotate(-90 0.706257 18.6624)"
-                                        fill="#3056D3"
-                                    />
-                                    <circle
-                                        cx="6.39669"
-                                        cy="18.6624"
-                                        r="0.646687"
-                                        transform="rotate(-90 6.39669 18.6624)"
-                                        fill="#3056D3"
-                                    />
-                                    <circle
-                                        cx="12.0881"
-                                        cy="18.6624"
-                                        r="0.646687"
-                                        transform="rotate(-90 12.0881 18.6624)"
-                                        fill="#3056D3"
-                                    />
-                                    <circle
-                                        cx="17.7785"
-                                        cy="18.6624"
-                                        r="0.646687"
-                                        transform="rotate(-90 17.7785 18.6624)"
-                                        fill="#3056D3"
-                                    />
-                                    <circle
-                                        cx="0.706257"
-                                        cy="12.9717"
-                                        r="0.646687"
-                                        transform="rotate(-90 0.706257 12.9717)"
-                                        fill="#3056D3"
-                                    />
-                                    <circle
-                                        cx="6.39669"
-                                        cy="12.9717"
-                                        r="0.646687"
-                                        transform="rotate(-90 6.39669 12.9717)"
-                                        fill="#3056D3"
-                                    />
-                                    <circle
-                                        cx="12.0881"
-                                        cy="12.9717"
-                                        r="0.646687"
-                                        transform="rotate(-90 12.0881 12.9717)"
-                                        fill="#3056D3"
-                                    />
-                                    <circle
-                                        cx="17.7785"
-                                        cy="12.9717"
-                                        r="0.646687"
-                                        transform="rotate(-90 17.7785 12.9717)"
-                                        fill="#3056D3"
-                                    />
-                                    <circle
-                                        cx="0.706257"
-                                        cy="7.28077"
-                                        r="0.646687"
-                                        transform="rotate(-90 0.706257 7.28077)"
-                                        fill="#3056D3"
-                                    />
-                                    <circle
-                                        cx="6.39669"
-                                        cy="7.28077"
-                                        r="0.646687"
-                                        transform="rotate(-90 6.39669 7.28077)"
-                                        fill="#3056D3"
-                                    />
-                                    <circle
-                                        cx="12.0881"
-                                        cy="7.28077"
-                                        r="0.646687"
-                                        transform="rotate(-90 12.0881 7.28077)"
-                                        fill="#3056D3"
-                                    />
-                                    <circle
-                                        cx="17.7785"
-                                        cy="7.28077"
-                                        r="0.646687"
-                                        transform="rotate(-90 17.7785 7.28077)"
-                                        fill="#3056D3"
-                                    />
-                                    <circle
-                                        cx="0.706257"
-                                        cy="1.58989"
-                                        r="0.646687"
-                                        transform="rotate(-90 0.706257 1.58989)"
-                                        fill="#3056D3"
-                                    />
-                                    <circle
-                                        cx="6.39669"
-                                        cy="1.58989"
-                                        r="0.646687"
-                                        transform="rotate(-90 6.39669 1.58989)"
-                                        fill="#3056D3"
-                                    />
-                                    <circle
-                                        cx="12.0881"
-                                        cy="1.58989"
-                                        r="0.646687"
-                                        transform="rotate(-90 12.0881 1.58989)"
-                                        fill="#3056D3"
-                                    />
-                                    <circle
-                                        cx="17.7785"
-                                        cy="1.58989"
-                                        r="0.646687"
-                                        transform="rotate(-90 17.7785 1.58989)"
-                                        fill="#3056D3"
-                                    />
-                                </svg>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-);
+// const TeamMemberCard = ({ imageSrc, name, jobTitle }: TeamMemberCardProps) => (
+//     <div className="w-full px-4 md:w-1/2 xl:w-1/4">
+//         <div className="mb-10 w-full">
+//             <div className="relative overflow-hidden rounded-lg">
+//                 <Image src={imageSrc} alt={name} className="w-full" width={400} height={400} />
+//                 <div className="absolute bottom-5 left-0 w-full text-center">
+//                     <div className="relative mx-5 overflow-hidden rounded-lg bg-white px-3 py-5 dark:bg-dark-2">
+//                         <h3 className="text-base font-semibold text-[#020b1a]">
+//                             {name}
+//                         </h3>
+//                         <p className="text-xs text-body-color dark:text-dark-6">
+//                             {jobTitle}
+//                         </p>
+//                         <div>
+//                             <span className="absolute bottom-0 left-0">
+//                                 <svg
+//                                     width={61}
+//                                     height={30}
+//                                     viewBox="0 0 61 30"
+//                                     fill="none"
+//                                     xmlns="http://www.w3.org/2000/svg"
+//                                 >
+//                                     <circle
+//                                         cx={16}
+//                                         cy={45}
+//                                         r={45}
+//                                         fill="#13C296"
+//                                         fillOpacity="0.11"
+//                                     />
+//                                 </svg>
+//                             </span>
+//                             <span className="absolute right-0 top-0">
+//                                 <svg
+//                                     width={20}
+//                                     height={25}
+//                                     viewBox="0 0 20 25"
+//                                     fill="none"
+//                                     xmlns="http://www.w3.org/2000/svg"
+//                                 >
+//                                     <circle
+//                                         cx="0.706257"
+//                                         cy="24.3533"
+//                                         r="0.646687"
+//                                         transform="rotate(-90 0.706257 24.3533)"
+//                                         fill="#3056D3"
+//                                     />
+//                                     <circle
+//                                         cx="6.39669"
+//                                         cy="24.3533"
+//                                         r="0.646687"
+//                                         transform="rotate(-90 6.39669 24.3533)"
+//                                         fill="#3056D3"
+//                                     />
+//                                     <circle
+//                                         cx="12.0881"
+//                                         cy="24.3533"
+//                                         r="0.646687"
+//                                         transform="rotate(-90 12.0881 24.3533)"
+//                                         fill="#3056D3"
+//                                     />
+//                                     <circle
+//                                         cx="17.7785"
+//                                         cy="24.3533"
+//                                         r="0.646687"
+//                                         transform="rotate(-90 17.7785 24.3533)"
+//                                         fill="#3056D3"
+//                                     />
+//                                     <circle
+//                                         cx="0.706257"
+//                                         cy="18.6624"
+//                                         r="0.646687"
+//                                         transform="rotate(-90 0.706257 18.6624)"
+//                                         fill="#3056D3"
+//                                     />
+//                                     <circle
+//                                         cx="6.39669"
+//                                         cy="18.6624"
+//                                         r="0.646687"
+//                                         transform="rotate(-90 6.39669 18.6624)"
+//                                         fill="#3056D3"
+//                                     />
+//                                     <circle
+//                                         cx="12.0881"
+//                                         cy="18.6624"
+//                                         r="0.646687"
+//                                         transform="rotate(-90 12.0881 18.6624)"
+//                                         fill="#3056D3"
+//                                     />
+//                                     <circle
+//                                         cx="17.7785"
+//                                         cy="18.6624"
+//                                         r="0.646687"
+//                                         transform="rotate(-90 17.7785 18.6624)"
+//                                         fill="#3056D3"
+//                                     />
+//                                     <circle
+//                                         cx="0.706257"
+//                                         cy="12.9717"
+//                                         r="0.646687"
+//                                         transform="rotate(-90 0.706257 12.9717)"
+//                                         fill="#3056D3"
+//                                     />
+//                                     <circle
+//                                         cx="6.39669"
+//                                         cy="12.9717"
+//                                         r="0.646687"
+//                                         transform="rotate(-90 6.39669 12.9717)"
+//                                         fill="#3056D3"
+//                                     />
+//                                     <circle
+//                                         cx="12.0881"
+//                                         cy="12.9717"
+//                                         r="0.646687"
+//                                         transform="rotate(-90 12.0881 12.9717)"
+//                                         fill="#3056D3"
+//                                     />
+//                                     <circle
+//                                         cx="17.7785"
+//                                         cy="12.9717"
+//                                         r="0.646687"
+//                                         transform="rotate(-90 17.7785 12.9717)"
+//                                         fill="#3056D3"
+//                                     />
+//                                     <circle
+//                                         cx="0.706257"
+//                                         cy="7.28077"
+//                                         r="0.646687"
+//                                         transform="rotate(-90 0.706257 7.28077)"
+//                                         fill="#3056D3"
+//                                     />
+//                                     <circle
+//                                         cx="6.39669"
+//                                         cy="7.28077"
+//                                         r="0.646687"
+//                                         transform="rotate(-90 6.39669 7.28077)"
+//                                         fill="#3056D3"
+//                                     />
+//                                     <circle
+//                                         cx="12.0881"
+//                                         cy="7.28077"
+//                                         r="0.646687"
+//                                         transform="rotate(-90 12.0881 7.28077)"
+//                                         fill="#3056D3"
+//                                     />
+//                                     <circle
+//                                         cx="17.7785"
+//                                         cy="7.28077"
+//                                         r="0.646687"
+//                                         transform="rotate(-90 17.7785 7.28077)"
+//                                         fill="#3056D3"
+//                                     />
+//                                     <circle
+//                                         cx="0.706257"
+//                                         cy="1.58989"
+//                                         r="0.646687"
+//                                         transform="rotate(-90 0.706257 1.58989)"
+//                                         fill="#3056D3"
+//                                     />
+//                                     <circle
+//                                         cx="6.39669"
+//                                         cy="1.58989"
+//                                         r="0.646687"
+//                                         transform="rotate(-90 6.39669 1.58989)"
+//                                         fill="#3056D3"
+//                                     />
+//                                     <circle
+//                                         cx="12.0881"
+//                                         cy="1.58989"
+//                                         r="0.646687"
+//                                         transform="rotate(-90 12.0881 1.58989)"
+//                                         fill="#3056D3"
+//                                     />
+//                                     <circle
+//                                         cx="17.7785"
+//                                         cy="1.58989"
+//                                         r="0.646687"
+//                                         transform="rotate(-90 17.7785 1.58989)"
+//                                         fill="#3056D3"
+//                                     />
+//                                 </svg>
+//                             </span>
+//                         </div>
+//                     </div>
+//                 </div>
+//             </div>
+//         </div>
+//     </div>
+// );
 
 
 
@@ -709,7 +755,7 @@ const TeamMemberCard = ({ imageSrc, name, jobTitle }: TeamMemberCardProps) => (
 
 
 
-const Modules = () => {
+const Modules = ({ syllabus }: { syllabus?: Syllabus[] }) => {
     return (
         <section className="w-[80%] z-20 overflow-hidden  pb-12 pt-20 dark:bg-dark lg:pb-[90px] lg:pt-[120px]">
             <div className="container">
@@ -720,42 +766,22 @@ const Modules = () => {
                             <h2 className="mb-4 text-3xl font-bold text-white sm:text-[40px]/[48px]">
                                 Modules
                             </h2>
-                            <p className="text-base text-body-color text-gray-600">
+                            {/* <p className="text-base text-body-color text-gray-600">
                                 There are many variations of passages of Lorem Ipsum available
                                 but the majority have suffered alteration in some form.
-                            </p>
+                            </p> */}
                         </div>
                     </div>
                 </div>
 
                 <div className="flex flex-wrap">
-
-                    <ModuleLession
-                        header="How long we deliver your first blog post?"
-                        text="It takes 2-3 weeks to get your first blog post ready. That includes the in-depth research & creation of your monthly content marketing strategy that we do before writing your first blog post, Ipsum available ."
-                    />
-                    <ModuleLession
-                        header="How long we deliver your first blog post?"
-                        text="It takes 2-3 weeks to get your first blog post ready. That includes the in-depth research & creation of your monthly content marketing strategy that we do before writing your first blog post, Ipsum available ."
-                    />
-                    <ModuleLession
-                        header="How long we deliver your first blog post?"
-                        text="It takes 2-3 weeks to get your first blog post ready. That includes the in-depth research & creation of your monthly content marketing strategy that we do before writing your first blog post, Ipsum available ."
-                    />
-
-                    <ModuleLession
-                        header="How long we deliver your first blog post?"
-                        text="It takes 2-3 weeks to get your first blog post ready. That includes the in-depth research & creation of your monthly content marketing strategy that we do before writing your first blog post, Ipsum available ."
-                    />
-                    <ModuleLession
-                        header="How long we deliver your first blog post?"
-                        text="It takes 2-3 weeks to get your first blog post ready. That includes the in-depth research & creation of your monthly content marketing strategy that we do before writing your first blog post, Ipsum available ."
-                    />
-                    <ModuleLession
-                        header="How long we deliver your first blog post?"
-                        text="It takes 2-3 weeks to get your first blog post ready. That includes the in-depth research & creation of your monthly content marketing strategy that we do before writing your first blog post, Ipsum available ."
-                    />
-
+                    {syllabus && syllabus.length > 0 ? (
+                        syllabus.map((item, idx) => (
+                            <ModuleLession key={idx} syllabus={item} />
+                        ))
+                    ) : (
+                        <div className="text-white">No modules available.</div>
+                    )}
                 </div>
             </div>
 
@@ -781,9 +807,9 @@ const Modules = () => {
                             y2="-418.681"
                             gradientUnits="userSpaceOnUse"
                         >
-                            <stop stop-color="#3056D3" stop-opacity="0.36" />
-                            <stop offset="1" stop-color="#F5F2FD" stop-opacity="0" />
-                            <stop offset="1" stop-color="#F5F2FD" stop-opacity="0.096144" />
+                            <stop stopColor="#3056D3" stopOpacity="0.36" />
+                            <stop offset="1" stopColor="#F5F2FD" stopOpacity="0" />
+                            <stop offset="1" stopColor="#F5F2FD" stopOpacity="0.096144" />
                         </linearGradient>
                     </defs>
                 </svg>
@@ -794,18 +820,16 @@ const Modules = () => {
 
 
 
-interface ModuleLessionProps {
-    header: string;
-    text: string;
-}
 
-const ModuleLession = ({ header }: ModuleLessionProps) => {
+
+const ModuleLession = ({ syllabus }: { syllabus: Syllabus }) => {
     const [active, setActive] = useState(false);
 
     const handleToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         setActive(!active);
     };
+
     return (
         <div className="mb-8 w-full rounded-lg border-b-[0.1px] border-gray-400 p-4 shadow-[0px_20px_95px_0px_rgba(201,203,204,0.30)] dark:bg-dark-2 dark:shadow-[0px_20px_95px_0px_rgba(0,0,0,0.30)] sm:p-8 lg:px-6 xl:px-8">
             <button
@@ -828,10 +852,9 @@ const ModuleLession = ({ header }: ModuleLessionProps) => {
                         />
                     </svg>
                 </div>
-
                 <div className="w-full">
                     <h4 className="mt-1 text-lg font-semibold text-white">
-                        {header}
+                        {syllabus.topic}
                     </h4>
                 </div>
             </button>
@@ -841,31 +864,17 @@ const ModuleLession = ({ header }: ModuleLessionProps) => {
                     }`}
             >
                 <ol className="list-disc pl-5" type="1">
-                    <li className="text-white">
-                        <ListItem />
-                    </li>
-                    <li className="text-white">
-                        <ListItem />
-                    </li>
-                    <li className="text-white">
-                        <ListItem />
-                    </li>
-                    <li className="text-white">
-                        <ListItem />
-                    </li>
-
+                    {syllabus.objectives && syllabus.objectives.length > 0 ? (
+                        syllabus.objectives.map((objective, idx) => (
+                            <li className="text-white" key={idx}>
+                                {objective}
+                            </li>
+                        ))
+                    ) : (
+                        <li className="text-white">No objectives listed.</li>
+                    )}
                 </ol>
             </div>
         </div>
     );
 };
-
-const ListItem = () => {
-    return (
-        <div className="flex justify-between w-full border-b-[0.1px] border-gray-400 p-4  ">
-            <p className="text-white">This is a test</p>
-            <p className="text-white">20 min</p>
-
-        </div>
-    )
-}

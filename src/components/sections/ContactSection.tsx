@@ -182,7 +182,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                     row={6}
                     placeholder="Your Message"
                     name="message"
-                    defaultValue=""
+                    // defaultValue=""
                     value={formData.message}
                     onChange={handleChange}
 

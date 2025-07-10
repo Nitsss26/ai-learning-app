@@ -13,6 +13,7 @@ import Link from "next/link";
 import axios from "axios";
 import Image from "next/image";
 
+
 export default function CoursesSection() {
     // const features = [
     //     {
@@ -62,10 +63,12 @@ export default function CoursesSection() {
       try {
         const response = await axios.get('/api/courses?page=1&limit=4')
         const courses = response.data.courses
-
+        console.log("Fetched courses:", courses)
         const transformed = courses.map((course: any, index: number) => ({
           title: course.title,
           description: course.description,
+          duration:course.duration_weeks,
+          students:course.students_enrolled,
           skeleton: SkeletonImage(`/course${(index % 4) + 1}.png`), // cycle 1-4
           className: [
             "col-span-1 lg:col-span-4 border-b lg:border-r dark:border-neutral-800",
@@ -122,12 +125,14 @@ export default function CoursesSection() {
                             "Loading ..."
                             :
                             features.map((feature) => (
+                                // <Link href={`/courses/${feature.title}`}>
                                 <FeatureCard key={feature.title} className={feature.className}>
                                     <FeatureTitle>{feature.title}</FeatureTitle>
                                     <FeatureDescription>{feature.description}</FeatureDescription>
-                                    <FeaturesContent />
+                                    <FeaturesContent duration={feature.duration} students={feature.students}  />
                                     {feature.skeleton}
                                 </FeatureCard>
+                                // </Link>
                             ))} 
                         </div>
                     </div>
@@ -151,7 +156,7 @@ const FeatureCard = ({
     className?: string;
 }) => {
     return (
-        <div className={cn(`p-4 sm:p-8 hover:bg-gradient-to-br cursor-pointer from-[#34a853] to-[#009688] relative overflow-hidden`, className)}>
+        <div className={cn(`p-4 sm:p-8 hover:bg-gradient-to-br from-[#34a853] to-[#009688] relative overflow-hidden`, className)}>
             {children}
         </div>
     );
@@ -173,7 +178,7 @@ const FeatureDescription = ({ children }: { children?: React.ReactNode }) => {
     );
 };
 
-export const FeaturesContent = () => {
+export const FeaturesContent = ({duration,students}:{duration:string, students:string}) => {
     return (
         <div className="flex flex-row items-center justify-start flex-wrap w-full gap-4 mt-4 mb-4">
             <div className="flex flex-row items-center justify-center">
@@ -181,7 +186,7 @@ export const FeaturesContent = () => {
                     <IconClockHour3 stroke={2} />
                 </h4>
                 <p className="text-sm text-neutral-500 dark:text-neutral-300 max-w-md text-center">
-                    8 weeks
+                    {duration} weeks
                 </p>
             </div>
             <div className="flex flex-row items-center justify-center">
@@ -189,7 +194,7 @@ export const FeaturesContent = () => {
                     <IconUsersGroup stroke={2} />
                 </h4>
                 <p className="text-sm text-neutral-500 dark:text-neutral-300 max-w-md text-center">
-                    1200+ Students Enrolled
+                    {students}+ Students Enrolled
                 </p>
             </div>
             <div className="flex flex-row items-center justify-center">
