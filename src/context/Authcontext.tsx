@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { createClient } from "@/lib/supabase/client"
+import { useCallback } from 'react';
 
 type MinimalUser = {
     id: string;
@@ -20,7 +21,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<MinimalUser | null>(null);
     const supabase = createClient();
-    const setUserFromToken = async () => {
+
+    const setUserFromToken = useCallback(async () => {
         const token = localStorage.getItem('token');
         if (!token) {
             console.warn('No token found in localStorage');
@@ -56,17 +58,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 setUser({ id: userId, email, role: null });
                 return;
             }
-
+            console.log('Fetched user role:', data);
+            
             setUser({ id: userId, email, role: data.role });
         } catch (err) {
             console.error('Token decode or fetch failed:', err);
             setUser(null);
         }
-    };
+    }, [supabase]);
 
     useEffect(() => {
         setUserFromToken();
-    }, []);
+    }, [setUserFromToken]);
 
     return (
         <AuthContext.Provider value={{ user, setUserFromToken }}>
